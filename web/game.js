@@ -431,6 +431,7 @@ function startNewGame() {
       hp: 28,
       maxHp: 28,
       mana: 10,
+      baseMaxMana: 10,
       maxMana: 10,
       level: 1,
       exp: 0,
@@ -602,7 +603,7 @@ function collectItemById(itemId) {
   if (CHARMS[itemId]) {
     if (!state.player.charmsOwned.includes(itemId)) state.player.charmsOwned.push(itemId);
     state.player.equipment.charm = itemId;
-    state.player.maxMana = 10 + charmManaBonus();
+    recalculateManaPool();
     state.player.mana = Math.min(state.player.maxMana, state.player.mana + 4);
     message(`You equip ${CHARMS[itemId].name}.`);
     return;
@@ -642,6 +643,10 @@ function equipArmor(itemId) {
 function addInventoryItem(itemId) {
   state.player.inventory[itemId] = (state.player.inventory[itemId] || 0) + 1;
   message(`Looted ${ITEMS[itemId].name}.`);
+  if (itemId === 'crypt_relic') {
+    state.quests.crypt_ward.relic_collected = true;
+    updateCryptQuestState();
+  }
 }
 
 function recordEnemyDefeat(kind, pos) {
@@ -713,11 +718,17 @@ function gainExperience(amount) {
     state.player.level += 1;
     state.player.nextExp += 6;
     state.player.maxHp += 5;
-    state.player.maxMana += 2;
+    state.player.baseMaxMana += 2;
+    recalculateManaPool();
     state.player.hp = state.player.maxHp;
     state.player.mana = state.player.maxMana;
     say('Guide', `Level up! You are now level ${state.player.level}.`);
   }
+}
+
+function recalculateManaPool() {
+  state.player.maxMana = state.player.baseMaxMana + charmManaBonus();
+  state.player.mana = Math.min(state.player.mana, state.player.maxMana);
 }
 
 function regenerateMana(amount) {
@@ -1063,6 +1074,7 @@ function loadGame() {
 function ensureSaveShape() {
   state.player.mana ??= 10;
   state.player.maxMana ??= 10;
+  state.player.baseMaxMana ??= Math.max(10, state.player.maxMana - ((state.player.equipment?.charm && CHARMS[state.player.equipment.charm]) ? CHARMS[state.player.equipment.charm].manaBonus : 0));
   state.player.armorOwned ??= state.player.armor ?? ['tattered_tunic', 'worn_boots'];
   state.player.charmsOwned ??= [];
   state.player.equipment ??= { body: 'tattered_tunic', feet: 'worn_boots', offhand: state.player.armorOwned.includes('buckler') ? 'buckler' : null, charm: null };
@@ -1079,6 +1091,7 @@ function ensureSaveShape() {
       items: MAP_DEFS.sunken_crypt.items.map((item) => ({ ...item, pos: [...item.pos] }))
     };
   }
+  recalculateManaPool();
 }
 
 function render() {
