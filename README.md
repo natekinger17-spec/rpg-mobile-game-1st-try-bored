@@ -4,7 +4,7 @@ An **iPhone-friendly offline web RPG vertical slice** inspired by classic Tibia-
 
 ## Why the web/PWA route
 
-You wanted this to be something you can **run from your iPhone**, so the repository is centered on a **Safari-friendly PWA build**.
+You wanted this to be something you can **run from your iPhone**, so the repository stays centered on a **Safari-friendly PWA build**.
 
 That gives you:
 - direct play on iPhone
@@ -16,14 +16,12 @@ That gives you:
 ## Current game slice
 
 The playable browser version now includes:
-- a retro-styled mobile UI inspired by older PC RPG layouts
-- **Ashenfall town** with healer, trader, blacksmith, and quest NPCs
-- **Old Cellar** with rats, bats, rough starting gear, and potion pickup
-- **Briar Meadow** with wolves, a dire wolf, and roaming danger on the road
-- **Orc Den** with an orc chieftain finale
-- **Troll Hollow** with trolls, a champion, and late-slice gear rewards
-- grid-based movement, bump combat, loot, gold, XP, leveling, defense, and upgrades
-- quest tracking, minimap, field log, and richer NPC dialogue feedback
+- retro-styled mobile UI inspired by older PC RPG layouts
+- **Ashenfall town** with healer, trader, blacksmith, acolyte, and quest NPCs
+- **Old Cellar**, **Briar Meadow**, **Orc Den**, **Troll Hollow**, and **Sunken Crypt**
+- bats, rats, wolves, dire wolves, orcs, trolls, skeletons, and boss-style variants
+- grid-based movement, bump combat, loot, gold, XP, leveling, defense, mana, and spells
+- equipment slots, merchant stock display, minimap, quest tracker, and dialogue panel
 - local save/load in the browser
 - offline PWA support through the service worker
 
@@ -62,16 +60,16 @@ Serve the repository as any static site that exposes:
 - or use the on-screen **direction buttons**
 - walk into enemies to attack
 - tap **Interact** to talk to nearby NPCs
-- tap **Swap Weapon** to cycle weapons
-- tap **Use Potion** to heal
+- tap **Use Potion** or **Use Mana Potion** to recover resources
+- tap **Cast Heal** or **Arcane Burst** once unlocked
 - tap **Save** and **Load** to store progress on the device
 
 ## Current quest flow
 
 1. Talk to **Elder Mara**
 2. Clear the cellar rats and bats
-3. Return to town and unlock the wolf hunt
-4. Clear the meadow wolves and dire wolf
-5. Defeat the orc chieftain and recover the banner
-6. Unlock **Troll Hollow** through Forgehand Bram
-7. Clear trolls, kill the champion, and claim better forged gear
+3. Unlock the meadow wolf hunt
+4. Defeat the orc chieftain and recover the banner
+5. Clear **Troll Hollow** for Forgehand Bram
+6. Talk to **Acolyte Nera** and cleanse the **Sunken Crypt**
+7. Finish the current slice with improved gear, mana tools, and stronger magic

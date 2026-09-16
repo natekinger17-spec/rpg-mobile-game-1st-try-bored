@@ -11,7 +11,6 @@
   --text: #f7edd7;
   --muted: #ccb998;
   --danger: #892c2c;
-  --success: #5b9955;
 }
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html, body { margin: 0; min-height: 100%; }
@@ -98,18 +97,19 @@ canvas {
   margin-bottom: 8px;
 }
 #dialogSpeaker { color: var(--accent-2); }
-#dialogText, .card p { margin: 0.35rem 0; color: var(--muted); line-height: 1.35; }
+#dialogText, .card p { margin: 0.35rem 0; color: var(--muted); line-height: 1.35; white-space: pre-line; }
 .zone-card h2 { margin: 0 0 0.5rem; }
 .section-title {
   color: var(--accent-2);
   font-weight: 700;
   margin-bottom: 8px;
 }
-.hud-grid {
+.hud-grid, .dual-grid {
   display: grid;
   gap: 12px;
-  grid-template-columns: minmax(0, 140px) minmax(0, 1fr);
 }
+.hud-grid { grid-template-columns: minmax(0, 140px) minmax(0, 1fr); }
+.dual-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .minimap-card { display: grid; justify-items: center; }
 #minimapCanvas {
   width: 128px;
@@ -139,6 +139,7 @@ canvas {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
 }
+.spell-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .dpad-wrap { text-align: center; }
 .dpad {
   display: grid;
@@ -160,6 +161,9 @@ canvas {
   margin-top: 8px;
   padding-top: 8px;
   border-top: 1px solid rgba(255,255,255,0.06);
+}
+@media (max-width: 640px) {
+  .hud-grid, .dual-grid { grid-template-columns: 1fr; }
 }
 @media (min-width: 980px) {
   .layout {

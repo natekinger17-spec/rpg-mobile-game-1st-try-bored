@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ashenfall-rpg-v2';
+const CACHE_NAME = 'ashenfall-rpg-v3';
 const FILES = [
   './',
   './index.html',
@@ -20,6 +20,7 @@ const FILES = [
   './assets/actors/wolf.svg',
   './assets/actors/orc.svg',
   './assets/actors/troll.svg',
+  './assets/actors/skeleton.svg',
   './assets/items/club.svg',
   './assets/items/knife.svg',
   './assets/items/sword.svg',
@@ -30,7 +31,9 @@ const FILES = [
   './assets/items/shield.svg',
   './assets/items/chainmail.svg',
   './assets/items/potion.svg',
-  './assets/items/banner.svg'
+  './assets/items/mana_potion.svg',
+  './assets/items/banner.svg',
+  './assets/items/amulet.svg'
 ];
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(FILES)));

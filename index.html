@@ -52,16 +52,29 @@
           <div class="frame card stats-card compact-grid">
             <div><span class="label">Level</span><strong id="playerLevel"></strong></div>
             <div><span class="label">HP</span><strong id="playerHp"></strong></div>
+            <div><span class="label">Mana</span><strong id="playerMana"></strong></div>
             <div><span class="label">XP</span><strong id="playerXp"></strong></div>
             <div><span class="label">Gold</span><strong id="playerGold"></strong></div>
             <div><span class="label">Weapon</span><strong id="playerWeapon"></strong></div>
             <div><span class="label">Defense</span><strong id="playerDefense"></strong></div>
+            <div><span class="label">Magic</span><strong id="playerMagic"></strong></div>
           </div>
         </div>
 
         <div class="frame card">
           <div class="section-title">Quest Tracker</div>
           <div id="questList" class="quest-list"></div>
+        </div>
+
+        <div class="dual-grid">
+          <div class="frame card">
+            <div class="section-title">Equipment</div>
+            <p id="equipmentSlots"></p>
+          </div>
+          <div class="frame card">
+            <div class="section-title">Merchant Stock</div>
+            <p id="merchantStock"></p>
+          </div>
         </div>
 
         <div class="frame card">
@@ -76,9 +89,15 @@
           <button id="interactButton" type="button">Interact</button>
           <button id="swapWeaponButton" type="button">Swap Weapon</button>
           <button id="usePotionButton" type="button">Use Potion</button>
+          <button id="useManaPotionButton" type="button">Use Mana Potion</button>
           <button id="saveButton" class="secondary" type="button">Save</button>
           <button id="loadButton" class="secondary" type="button">Load</button>
           <button id="newRunButton" class="danger" type="button">New Run</button>
+        </div>
+
+        <div class="frame card actions spell-actions">
+          <button id="castHealButton" type="button">Cast Heal</button>
+          <button id="castBurstButton" type="button">Arcane Burst</button>
         </div>
 
         <div class="frame card dpad-wrap">
