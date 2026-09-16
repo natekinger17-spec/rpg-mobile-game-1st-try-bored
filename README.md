@@ -4,55 +4,57 @@ An **iPhone-friendly offline web RPG vertical slice** inspired by classic Tibia-
 
 ## Why the web/PWA route
 
-You said you want to **do and run this from your iPhone**, so the repo now includes a **no-build browser version** that works well in Safari and can be installed to the home screen.
+You wanted this to be something you can **run from your iPhone**, so the repository is centered on a **Safari-friendly PWA build**.
 
 That gives you:
 - direct play on iPhone
-- no native app packaging required to test
-- offline play after the first load through the included service worker
-- a repo that can be hosted on GitHub Pages or any static host
+- no native build tooling needed to test
+- install-to-home-screen support
+- offline play after the first load
+- static hosting support on GitHub Pages
 
 ## Current game slice
 
-The playable loop includes:
-- **Ashenfall town** with healer, trader, and quest NPCs
-- **Old Cellar** with bats, rats, starter gear, and potion pickup
-- **Briar Meadow** with wolves and a dire wolf
+The playable browser version now includes:
+- a retro-styled mobile UI inspired by older PC RPG layouts
+- **Ashenfall town** with healer, trader, blacksmith, and quest NPCs
+- **Old Cellar** with rats, bats, rough starting gear, and potion pickup
+- **Briar Meadow** with wolves, a dire wolf, and roaming danger on the road
 - **Orc Den** with an orc chieftain finale
-- grid-based movement and bump combat
-- gear upgrades, gold, consumables, trophies, XP, levels, and defense
-- quest progression from starter cellar contract to the orc finale
-- touch-friendly controls for iPhone
+- **Troll Hollow** with trolls, a champion, and late-slice gear rewards
+- grid-based movement, bump combat, loot, gold, XP, leveling, defense, and upgrades
+- quest tracking, minimap, field log, and richer NPC dialogue feedback
 - local save/load in the browser
-- installable PWA support
+- offline PWA support through the service worker
 
 ## Project structure
 
 - `/index.html` — browser entry point
-- `/web/game.js` — game logic
+- `/web/game.js` — game logic and content
 - `/web/styles.css` — mobile UI styling
 - `/manifest.webmanifest` — install metadata
 - `/sw.js` — offline cache support
 - `/assets/` — placeholder pixel-style art
 
-The earlier Godot prototype files are still in the repo as a reference build, but the **web version is now the easiest way to run this from iPhone**.
+The earlier Godot files remain in the repo as reference material, but the **web version is the primary runnable build**.
 
 ## How to run on iPhone
 
 ### Best option: GitHub Pages
 
-1. Enable **GitHub Pages** for this repository using the repository root.
+1. Enable **GitHub Pages** for this repository from the repository root.
 2. Open the Pages URL in **Safari** on your iPhone.
 3. Tap **Share → Add to Home Screen**.
-4. Open it once while online so Safari caches the app.
-5. After that, it should continue working offline.
+4. Open it once while online so Safari can cache it.
+5. After that, it should keep working offline.
 
 ### Other option
 
-Serve the repository as a static site from any host that exposes:
+Serve the repository as any static site that exposes:
 - `/index.html`
 - `/web/game.js`
 - `/web/styles.css`
+- `/sw.js`
 
 ## Controls
 
@@ -64,12 +66,12 @@ Serve the repository as a static site from any host that exposes:
 - tap **Use Potion** to heal
 - tap **Save** and **Load** to store progress on the device
 
-## Quest flow
+## Current quest flow
 
 1. Talk to **Elder Mara**
 2. Clear the cellar rats and bats
-3. Turn in the quest
-4. Take Brann's wolf contract
-5. Clear the meadow
-6. Take Captain Ivo's orc quest
-7. Kill the chieftain, grab the banner, and return it
+3. Return to town and unlock the wolf hunt
+4. Clear the meadow wolves and dire wolf
+5. Defeat the orc chieftain and recover the banner
+6. Unlock **Troll Hollow** through Forgehand Bram
+7. Clear trolls, kill the champion, and claim better forged gear

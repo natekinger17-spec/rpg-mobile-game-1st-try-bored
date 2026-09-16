@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-  <meta name="theme-color" content="#1f160f">
+  <meta name="theme-color" content="#1a140f">
   <title>Ashenfall RPG</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="icon.svg">
@@ -11,45 +11,68 @@
 </head>
 <body>
   <div class="app-shell">
-    <header class="topbar">
+    <header class="topbar frame">
       <div>
-        <h1>Ashenfall RPG</h1>
-        <p>iPhone-first offline PvE prototype</p>
+        <p class="eyebrow">RETRO MOBILE RPG</p>
+        <h1>Ashenfall</h1>
+        <p class="subcopy">iPhone-first offline PvE adventure</p>
       </div>
       <button id="installButton" class="secondary hidden" type="button">Install</button>
     </header>
 
     <main class="layout">
-      <section class="game-panel">
-        <canvas id="gameCanvas" width="512" height="384" aria-label="Game map"></canvas>
+      <section class="game-stack">
+        <div class="frame game-panel">
+          <canvas id="gameCanvas" width="512" height="384" aria-label="Game map"></canvas>
+        </div>
+
+        <div class="frame dialogue-panel">
+          <div class="dialogue-head">
+            <strong id="dialogSpeaker">Guide</strong>
+            <button id="closeDialogueButton" class="secondary small" type="button">Close</button>
+          </div>
+          <p id="dialogText">Welcome to Ashenfall.</p>
+        </div>
       </section>
 
       <section class="hud-panel">
-        <div class="card">
+        <div class="frame card zone-card">
           <h2 id="zoneName">Loading…</h2>
           <p id="zoneStory"></p>
           <p id="objectiveText"></p>
           <p id="nearbyText"></p>
         </div>
 
-        <div class="card compact-grid">
-          <div><span class="label">Level</span><strong id="playerLevel"></strong></div>
-          <div><span class="label">HP</span><strong id="playerHp"></strong></div>
-          <div><span class="label">XP</span><strong id="playerXp"></strong></div>
-          <div><span class="label">Gold</span><strong id="playerGold"></strong></div>
-          <div><span class="label">Weapon</span><strong id="playerWeapon"></strong></div>
-          <div><span class="label">Defense</span><strong id="playerDefense"></strong></div>
+        <div class="hud-grid">
+          <div class="frame card minimap-card">
+            <div class="section-title">Mini Map</div>
+            <canvas id="minimapCanvas" width="128" height="96" aria-label="Mini map"></canvas>
+          </div>
+
+          <div class="frame card stats-card compact-grid">
+            <div><span class="label">Level</span><strong id="playerLevel"></strong></div>
+            <div><span class="label">HP</span><strong id="playerHp"></strong></div>
+            <div><span class="label">XP</span><strong id="playerXp"></strong></div>
+            <div><span class="label">Gold</span><strong id="playerGold"></strong></div>
+            <div><span class="label">Weapon</span><strong id="playerWeapon"></strong></div>
+            <div><span class="label">Defense</span><strong id="playerDefense"></strong></div>
+          </div>
         </div>
 
-        <div class="card">
-          <h3>Inventory</h3>
+        <div class="frame card">
+          <div class="section-title">Quest Tracker</div>
+          <div id="questList" class="quest-list"></div>
+        </div>
+
+        <div class="frame card">
+          <div class="section-title">Inventory</div>
           <p id="inventoryArmor"></p>
           <p id="inventoryWeapons"></p>
           <p id="inventoryPotions"></p>
           <p id="inventoryLoot"></p>
         </div>
 
-        <div class="card actions">
+        <div class="frame card actions">
           <button id="interactButton" type="button">Interact</button>
           <button id="swapWeaponButton" type="button">Swap Weapon</button>
           <button id="usePotionButton" type="button">Use Potion</button>
@@ -58,8 +81,8 @@
           <button id="newRunButton" class="danger" type="button">New Run</button>
         </div>
 
-        <div class="card dpad-wrap">
-          <h3>Move</h3>
+        <div class="frame card dpad-wrap">
+          <div class="section-title">Move</div>
           <div class="dpad">
             <div></div>
             <button data-move="up" type="button">▲</button>
@@ -71,8 +94,8 @@
           <p class="hint">Swipe on the map or use these buttons.</p>
         </div>
 
-        <div class="card">
-          <h3>Field Notes</h3>
+        <div class="frame card">
+          <div class="section-title">Field Notes</div>
           <div id="logOutput" class="log"></div>
         </div>
       </section>

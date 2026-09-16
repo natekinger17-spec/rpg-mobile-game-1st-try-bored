@@ -1,16 +1,24 @@
 const TILE_SIZE = 32;
-const SAVE_KEY = 'ashenfall-rpg-save-v1';
-const LOG_LIMIT = 9;
+const SAVE_KEY = 'ashenfall-rpg-save-v2';
+const LOG_LIMIT = 10;
+
+const QUEST_ORDER = ['cellar_sweep', 'wolf_hunt', 'orc_threat', 'troll_hunt'];
+const QUEST_LABELS = {
+  cellar_sweep: 'Cellar Sweep',
+  wolf_hunt: 'Wolf Hunt',
+  orc_threat: 'Orc Threat',
+  troll_hunt: 'Troll Hollow'
+};
 
 const MAP_DEFS = {
   town: {
     name: 'Ashenfall',
-    story: 'Town hub with quests, healing, and trading.',
+    story: 'Town hub with healing, trading, and contracts.',
     layout: [
       '################',
       '#,,,,,::::,,,,,#',
       '#,,...:..:...,,#',
-      '#,,..........,,#',
+      '#,,....:.....,,#',
       '#,,....::....,,#',
       '#:............:#',
       '#:....,,,,....:#',
@@ -22,6 +30,7 @@ const MAP_DEFS = {
     ],
     npcs: [
       { id: 'healer', name: 'Sister Hale', pos: [4, 3] },
+      { id: 'smith', name: 'Forgehand Bram', pos: [8, 3] },
       { id: 'captain', name: 'Captain Ivo', pos: [11, 3] },
       { id: 'hunter', name: 'Brann the Hunter', pos: [8, 5] },
       { id: 'elder', name: 'Elder Mara', pos: [4, 8] },
@@ -70,7 +79,7 @@ const MAP_DEFS = {
   },
   meadow: {
     name: 'Briar Meadow',
-    story: 'Open field where wolves prowl the road.',
+    story: 'Roadside fields where wolves and raiders roam.',
     layout: [
       '################',
       '#,,,,,,,,,,,,,,#',
@@ -80,7 +89,7 @@ const MAP_DEFS = {
       '#<:....,,,,...:#',
       '#,:....,,,,...:#',
       '#,:..,,....,..:#',
-      '#,:..,,....,..:#',
+      '#,:..,,....,>.#',
       '#,:::::...,,..,#',
       '#,,,,,,,,,,,,,,#',
       '################'
@@ -88,12 +97,14 @@ const MAP_DEFS = {
     npcs: [],
     exits: [
       { pos: [1, 5], targetMap: 'town', targetPos: [11, 9], message: 'You head back through the town road.' },
-      { pos: [11, 2], targetMap: 'orc_den', targetPos: [2, 10], message: 'You enter the cracked cave mouth.' }
+      { pos: [11, 2], targetMap: 'orc_den', targetPos: [2, 10], message: 'You enter the cracked cave mouth.' },
+      { pos: [12, 8], targetMap: 'troll_hollow', targetPos: [2, 10], message: 'You push through the briars into troll country.' }
     ],
     enemies: [
       { kind: 'wolf', pos: [5, 5] },
       { kind: 'wolf', pos: [9, 7] },
-      { kind: 'dire_wolf', pos: [12, 4] }
+      { kind: 'dire_wolf', pos: [12, 4] },
+      { kind: 'orc', pos: [10, 6] }
     ],
     items: [
       { id: 'small_potion', pos: [4, 8] },
@@ -102,7 +113,7 @@ const MAP_DEFS = {
   },
   orc_den: {
     name: 'Orc Den',
-    story: 'Final cave push ending with an orc chieftain fight.',
+    story: 'Dark cave ending in the chieftain fight.',
     layout: [
       '################',
       '#..............#',
@@ -129,20 +140,52 @@ const MAP_DEFS = {
     items: [
       { id: 'small_potion', pos: [5, 8] }
     ]
+  },
+  troll_hollow: {
+    name: 'Troll Hollow',
+    story: 'A rocky sinkhole where trolls hoard stolen iron.',
+    layout: [
+      '################',
+      '#,,,,....,,,,,,#',
+      '#,~~~....~~~...#',
+      '#,~~..##..~~...#',
+      '#,..,....,.....#',
+      '#...,...,,..##.#',
+      '#...,,..,,.....#',
+      '#..##....##....#',
+      '#......,.......#',
+      '#......,....>..#',
+      '#.<....,,,,....#',
+      '################'
+    ],
+    npcs: [],
+    exits: [
+      { pos: [2, 10], targetMap: 'meadow', targetPos: [12, 8], message: 'You slip back out to the meadow road.' }
+    ],
+    enemies: [
+      { kind: 'troll', pos: [6, 4] },
+      { kind: 'troll', pos: [10, 6] },
+      { kind: 'troll_champion', pos: [11, 9] }
+    ],
+    items: [
+      { id: 'small_potion', pos: [4, 7] }
+    ]
   }
 };
 
 const WEAPONS = {
   club: { name: 'Rough Club', minDamage: 3, maxDamage: 5, crit: 0.05, icon: 'club' },
   knife: { name: 'Rusty Knife', minDamage: 4, maxDamage: 6, crit: 0.15, icon: 'knife' },
-  iron_sword: { name: 'Iron Sword', minDamage: 6, maxDamage: 9, crit: 0.12, icon: 'sword' }
+  iron_sword: { name: 'Iron Sword', minDamage: 6, maxDamage: 9, crit: 0.12, icon: 'sword' },
+  spiked_mace: { name: 'Spiked Mace', minDamage: 8, maxDamage: 12, crit: 0.1, icon: 'mace' }
 };
 
 const ARMOR = {
   tattered_tunic: { name: 'Tattered Tunic', defense: 1, icon: 'tattered_tunic' },
   worn_boots: { name: 'Worn Boots', defense: 1, icon: 'worn_boots' },
   buckler: { name: 'Buckler', defense: 2, icon: 'buckler' },
-  leather_vest: { name: 'Leather Vest', defense: 3, icon: 'leather_vest' }
+  leather_vest: { name: 'Leather Vest', defense: 3, icon: 'leather_vest' },
+  chainmail: { name: 'Chainmail Coat', defense: 4, icon: 'chainmail' }
 };
 
 const ITEMS = {
@@ -152,6 +195,8 @@ const ITEMS = {
   wolf_pelt: { name: 'Wolf Pelt' },
   dire_pelt: { name: 'Dire Wolf Pelt' },
   orc_badge: { name: 'Orc Badge' },
+  troll_tusk: { name: 'Troll Tusk' },
+  troll_iron: { name: 'Troll Iron Cache' },
   stolen_banner: { name: 'Stolen Banner', icon: 'stolen_banner' }
 };
 
@@ -161,7 +206,9 @@ const ENEMIES = {
   wolf: { name: 'Wolf', maxHp: 12, attack: 4, icon: 'wolf', exp: 7, gold: [5, 8], drop: 'wolf_pelt' },
   dire_wolf: { name: 'Dire Wolf', maxHp: 18, attack: 6, icon: 'wolf', exp: 11, gold: [8, 12], drop: 'dire_pelt' },
   orc: { name: 'Orc Raider', maxHp: 16, attack: 5, icon: 'orc', exp: 10, gold: [7, 12], drop: 'orc_badge' },
-  orc_chieftain: { name: 'Orc Chieftain', maxHp: 28, attack: 8, icon: 'orc', exp: 20, gold: [18, 26], drop: 'orc_badge' }
+  orc_chieftain: { name: 'Orc Chieftain', maxHp: 28, attack: 8, icon: 'orc', exp: 20, gold: [18, 26], drop: 'orc_badge' },
+  troll: { name: 'Troll', maxHp: 24, attack: 7, icon: 'troll', exp: 16, gold: [12, 18], drop: 'troll_tusk' },
+  troll_champion: { name: 'Troll Champion', maxHp: 34, attack: 10, icon: 'troll', exp: 28, gold: [24, 34], drop: 'troll_iron' }
 };
 
 const TILE_ASSETS = {
@@ -177,13 +224,16 @@ const TILE_ASSETS = {
   bat: 'assets/actors/bat.svg',
   wolf: 'assets/actors/wolf.svg',
   orc: 'assets/actors/orc.svg',
+  troll: 'assets/actors/troll.svg',
   club: 'assets/items/club.svg',
   knife: 'assets/items/knife.svg',
   sword: 'assets/items/sword.svg',
+  mace: 'assets/items/mace.svg',
   tattered_tunic: 'assets/items/tunic.svg',
   worn_boots: 'assets/items/boots.svg',
   leather_vest: 'assets/items/vest.svg',
   buckler: 'assets/items/shield.svg',
+  chainmail: 'assets/items/chainmail.svg',
   small_potion: 'assets/items/potion.svg',
   stolen_banner: 'assets/items/banner.svg'
 };
@@ -197,6 +247,7 @@ const DIRECTIONS = {
 
 const refs = {};
 let ctx;
+let minimapCtx;
 let deferredPrompt = null;
 let images = {};
 let state = null;
@@ -206,6 +257,7 @@ async function boot() {
   collectRefs();
   bindEvents();
   ctx = refs.canvas.getContext('2d');
+  minimapCtx = refs.minimapCanvas.getContext('2d');
   images = await loadImages();
   registerServiceWorker();
   startNewGame();
@@ -213,6 +265,7 @@ async function boot() {
 
 function collectRefs() {
   refs.canvas = document.getElementById('gameCanvas');
+  refs.minimapCanvas = document.getElementById('minimapCanvas');
   refs.zoneName = document.getElementById('zoneName');
   refs.zoneStory = document.getElementById('zoneStory');
   refs.objectiveText = document.getElementById('objectiveText');
@@ -227,6 +280,10 @@ function collectRefs() {
   refs.inventoryWeapons = document.getElementById('inventoryWeapons');
   refs.inventoryPotions = document.getElementById('inventoryPotions');
   refs.inventoryLoot = document.getElementById('inventoryLoot');
+  refs.questList = document.getElementById('questList');
+  refs.dialogSpeaker = document.getElementById('dialogSpeaker');
+  refs.dialogText = document.getElementById('dialogText');
+  refs.closeDialogueButton = document.getElementById('closeDialogueButton');
   refs.interactButton = document.getElementById('interactButton');
   refs.swapWeaponButton = document.getElementById('swapWeaponButton');
   refs.usePotionButton = document.getElementById('usePotionButton');
@@ -244,9 +301,8 @@ function bindEvents() {
   refs.saveButton.addEventListener('click', saveGame);
   refs.loadButton.addEventListener('click', loadGame);
   refs.newRunButton.addEventListener('click', startNewGame);
-  document.querySelectorAll('[data-move]').forEach((button) => {
-    button.addEventListener('click', () => playerTurn(DIRECTIONS[button.dataset.move]));
-  });
+  refs.closeDialogueButton.addEventListener('click', clearDialogue);
+  document.querySelectorAll('[data-move]').forEach((button) => button.addEventListener('click', () => playerTurn(DIRECTIONS[button.dataset.move])));
   window.addEventListener('keydown', (event) => {
     const key = event.key.toLowerCase();
     if (key === 'arrowup' || key === 'w') playerTurn(DIRECTIONS.up);
@@ -257,17 +313,13 @@ function bindEvents() {
     else if (key === 'e') usePotion();
     else if (key === 'f') tryInteract();
   });
-  refs.canvas.addEventListener('touchstart', (event) => {
-    touchStart = getTouchPoint(event);
-  }, { passive: true });
+  refs.canvas.addEventListener('touchstart', (event) => { touchStart = getTouchPoint(event); }, { passive: true });
   refs.canvas.addEventListener('touchend', (event) => {
     if (!touchStart) return;
     handleSwipe(getTouchPoint(event.changedTouches[0]), touchStart);
     touchStart = null;
   }, { passive: true });
-  refs.canvas.addEventListener('mousedown', (event) => {
-    touchStart = { x: event.clientX, y: event.clientY };
-  });
+  refs.canvas.addEventListener('mousedown', (event) => { touchStart = { x: event.clientX, y: event.clientY }; });
   refs.canvas.addEventListener('mouseup', (event) => {
     if (!touchStart) return;
     handleSwipe({ x: event.clientX, y: event.clientY }, touchStart);
@@ -305,21 +357,23 @@ function startNewGame() {
     player: {
       pos: [7, 8], hp: 28, maxHp: 28, level: 1, exp: 0, nextExp: 12, gold: 10,
       weapon: 'club', weapons: ['club'], armor: ['tattered_tunic', 'worn_boots'], potions: 1,
-      inventory: { rat_tail: 0, bat_wing: 0, wolf_pelt: 0, dire_pelt: 0, orc_badge: 0, stolen_banner: 0 }
+      inventory: { rat_tail: 0, bat_wing: 0, wolf_pelt: 0, dire_pelt: 0, orc_badge: 0, troll_tusk: 0, troll_iron: 0, stolen_banner: 0 }
     },
     quests: {
       cellar_sweep: { status: 'available', rat: 0, bat: 0 },
       wolf_hunt: { status: 'locked', wolf: 0, dire_wolf: 0 },
-      orc_threat: { status: 'locked', chieftain_defeated: false, banner_collected: false }
+      orc_threat: { status: 'locked', chieftain_defeated: false, banner_collected: false },
+      troll_hunt: { status: 'locked', troll: 0, troll_champion: 0 }
     },
     worldState: Object.fromEntries(Object.keys(MAP_DEFS).map((mapId) => [mapId, {
       enemies: MAP_DEFS[mapId].enemies.map((entry) => makeEnemy(entry.kind, entry.pos)),
       items: MAP_DEFS[mapId].items.map((item) => ({ ...item, pos: [...item.pos] }))
     }])),
-    logLines: []
+    logLines: [],
+    dialogue: { speaker: 'Guide', text: 'Talk to Elder Mara first. Ashenfall keeps growing from there.' }
   };
-  message('Ashenfall now runs directly in Safari and can be saved on your iPhone.');
-  message('Talk to Elder Mara first, then clear the cellar, meadow, and orc den.');
+  message('Ashenfall now has a retro HUD, minimap, and expanded quest line.');
+  message('Start with Elder Mara, then move through wolves, orcs, and trolls.');
   refresh();
 }
 
@@ -333,6 +387,7 @@ function currentEnemies() { return state.worldState[state.currentMapId].enemies;
 function currentItems() { return state.worldState[state.currentMapId].items; }
 
 function playerTurn(direction) {
+  clearDialogue();
   const target = [state.player.pos[0] + direction[0], state.player.pos[1] + direction[1]];
   if (!inBounds(target)) return;
   const npc = npcAt(target);
@@ -409,9 +464,7 @@ function bestStepToward(start, goal, skipIndex) {
     if (xStep) candidates.push([start[0] + xStep, start[1]]);
   }
   [[-1, 0], [1, 0], [0, -1], [0, 1]].forEach(([dx, dy]) => candidates.push([start[0] + dx, start[1] + dy]));
-  return candidates.find((candidate) => (
-    !samePos(candidate, state.player.pos) && isWalkable(candidate) && !npcAt(candidate) && enemyAt(candidate, skipIndex) === -1
-  )) || start;
+  return candidates.find((candidate) => !samePos(candidate, state.player.pos) && isWalkable(candidate) && !npcAt(candidate) && enemyAt(candidate, skipIndex) === -1) || start;
 }
 
 function handleDefeat() {
@@ -420,8 +473,7 @@ function handleDefeat() {
   state.player.hp = state.player.maxHp;
   state.currentMapId = 'town';
   state.player.pos = [7, 8];
-  message(`You collapse, lose ${goldLoss} gold, and wake back in Ashenfall.`);
-  message('Sister Hale patches you up enough for another run.');
+  say('Sister Hale', `You collapse, lose ${goldLoss} gold, and wake back in Ashenfall.`);
 }
 
 function collectGroundItem(pos) {
@@ -492,6 +544,14 @@ function recordEnemyDefeat(kind, pos) {
     message('The Orc Chieftain falls and drops the stolen banner.');
     updateOrcQuestState();
   }
+  if (state.quests.troll_hunt.status === 'active') {
+    if (kind === 'troll') state.quests.troll_hunt.troll += 1;
+    if (kind === 'troll_champion') state.quests.troll_hunt.troll_champion += 1;
+    if (state.quests.troll_hunt.troll >= 2 && state.quests.troll_hunt.troll_champion >= 1) {
+      state.quests.troll_hunt.status = 'turnin';
+      message('Troll Hollow is clear. Return to Forgehand Bram.');
+    }
+  }
 }
 
 function updateOrcQuestState() {
@@ -514,11 +574,12 @@ function gainExperience(amount) {
     state.player.nextExp += 6;
     state.player.maxHp += 5;
     state.player.hp = state.player.maxHp;
-    message(`Level up! You are now level ${state.player.level}.`);
+    say('Guide', `Level up! You are now level ${state.player.level}.`);
   }
 }
 
 function swapWeapon() {
+  clearDialogue();
   if (state.player.weapons.length <= 1) {
     message('You have no alternate weapon yet.');
     refresh();
@@ -531,6 +592,7 @@ function swapWeapon() {
 }
 
 function usePotion() {
+  clearDialogue();
   if (state.player.potions <= 0) {
     message('No potion available.');
     refresh();
@@ -552,10 +614,10 @@ function tryInteract() {
   const npc = adjacentNpc();
   if (!npc) {
     message('No one is close enough to talk to.');
-  } else {
-    interactWithNpc(npc);
+    refresh();
+    return;
   }
-  refresh();
+  interactWithNpc(npc);
 }
 
 function interactWithNpc(npc) {
@@ -565,66 +627,69 @@ function interactWithNpc(npc) {
     case 'captain': interactCaptain(); break;
     case 'trader': interactTrader(); break;
     case 'healer': interactHealer(); break;
+    case 'smith': interactSmith(); break;
     default: break;
   }
+  refresh();
 }
 
 function interactElder() {
   const quest = state.quests.cellar_sweep;
   if (quest.status === 'available') {
     quest.status = 'active';
-    message('Elder Mara: Clear the cellar. Bring me proof the rats and bats are gone.');
+    say('Elder Mara', 'Clear the cellar. Bring me proof the rats and bats are gone.');
   } else if (quest.status === 'active') {
-    message('Elder Mara: The cellar needs 3 rats and 2 bats cleared.');
+    say('Elder Mara', 'The cellar still needs 3 rats and 2 bats cleared.');
   } else if (quest.status === 'turnin') {
     quest.status = 'done';
     state.quests.wolf_hunt.status = 'available';
     state.player.gold += 12;
     state.player.potions += 1;
-    message('Elder Mara pays 12 gold and a potion for the cellar job.');
+    say('Elder Mara', 'Good work. Take 12 gold and a potion, then see Brann for the meadow road.');
   } else {
-    message('Elder Mara: Brann and the captain can use a capable blade.');
+    say('Elder Mara', 'Ashenfall is steadier now. Keep pushing outward.');
   }
 }
 
 function interactHunter() {
   const quest = state.quests.wolf_hunt;
   if (quest.status === 'locked') {
-    message('Brann the Hunter: Help the elder first.');
+    say('Brann the Hunter', 'Help the elder first. The meadow can wait.');
   } else if (quest.status === 'available') {
     quest.status = 'active';
-    message('Brann: Thin the meadow pack. I need 2 wolves and the dire alpha gone.');
+    say('Brann the Hunter', 'Thin the meadow pack. I need 2 wolves and the dire alpha gone.');
   } else if (quest.status === 'active') {
-    message('Brann: The meadow still has wolves on the road.');
+    say('Brann the Hunter', 'The road is still unsafe. Finish the pack.');
   } else if (quest.status === 'turnin') {
     quest.status = 'done';
     state.quests.orc_threat.status = 'available';
     state.player.gold += 20;
     state.player.potions += 1;
     if (!state.player.armor.includes('leather_vest')) state.player.armor.push('leather_vest');
-    message('Brann hands over a Leather Vest, 20 gold, and a potion.');
+    say('Brann the Hunter', 'Take this leather vest, 20 gold, and a potion. Captain Ivo has a harder job next.');
   } else {
-    message('Brann: The cave beyond the meadow is where the real trouble starts.');
+    say('Brann the Hunter', 'The cave beyond the meadow is where the raiders gather.');
   }
 }
 
 function interactCaptain() {
   const quest = state.quests.orc_threat;
   if (quest.status === 'locked') {
-    message('Captain Ivo: Earn Brann\'s trust first.');
+    say('Captain Ivo', 'Earn Brann\'s trust first.');
   } else if (quest.status === 'available') {
     quest.status = 'active';
-    message('Captain Ivo: Enter the orc den, kill the chieftain, and recover our banner.');
+    say('Captain Ivo', 'Enter the orc den, kill the chieftain, and recover our banner.');
   } else if (quest.status === 'active') {
-    message(quest.chieftain_defeated ? 'Captain Ivo: Find the banner before you return.' : 'Captain Ivo: The chieftain still lives.');
+    say('Captain Ivo', quest.chieftain_defeated ? 'Find the banner before you return.' : 'The chieftain still lives.');
   } else if (quest.status === 'turnin') {
     quest.status = 'done';
+    state.quests.troll_hunt.status = 'available';
     state.player.gold += 40;
     if (!state.player.weapons.includes('iron_sword')) state.player.weapons.push('iron_sword');
     state.player.weapon = 'iron_sword';
-    message('Captain Ivo rewards you with an Iron Sword and 40 gold. Ashenfall is safe.');
+    say('Captain Ivo', 'Ashenfall is safe for now. Take this Iron Sword and see Bram about the troll hollow.');
   } else {
-    message('Captain Ivo: This loop is complete. Next we scale content outward.');
+    say('Captain Ivo', 'The road is yours, but the trolls still hoard iron to the east.');
   }
 }
 
@@ -633,9 +698,9 @@ function interactTrader() {
     if (state.player.gold >= 18) {
       state.player.gold -= 18;
       state.player.armor.push('buckler');
-      message('Trader Sela sells you a Buckler for 18 gold.');
+      say('Trader Sela', 'A buckler for 18 gold. Keep your shield high.');
     } else {
-      message('Trader Sela: Buckler is 18 gold.');
+      say('Trader Sela', 'Buckler costs 18 gold.');
     }
     return;
   }
@@ -643,24 +708,45 @@ function interactTrader() {
     if (state.player.gold >= 12) {
       state.player.gold -= 12;
       state.player.weapons.push('knife');
-      message('Trader Sela sells you a Rusty Knife for 12 gold.');
+      say('Trader Sela', 'Rusty Knife for 12 gold. Not pretty, but it bites.');
     } else {
-      message('Trader Sela: Rusty Knife is 12 gold.');
+      say('Trader Sela', 'Rusty Knife costs 12 gold.');
     }
     return;
   }
   if (state.player.gold >= 8) {
     state.player.gold -= 8;
     state.player.potions += 1;
-    message('Trader Sela sells you a Small Potion for 8 gold.');
+    say('Trader Sela', 'Small Potion for 8 gold.');
   } else {
-    message('Trader Sela: Come back with 8 gold for another potion.');
+    say('Trader Sela', 'Come back with 8 gold for another potion.');
   }
 }
 
 function interactHealer() {
   state.player.hp = state.player.maxHp;
-  message('Sister Hale restores your health.');
+  say('Sister Hale', 'You are mended. Go carefully.');
+}
+
+function interactSmith() {
+  const quest = state.quests.troll_hunt;
+  if (quest.status === 'locked') {
+    say('Forgehand Bram', 'Bring me proof the orcs are dealt with and I will speak of better iron.');
+  } else if (quest.status === 'available') {
+    quest.status = 'active';
+    say('Forgehand Bram', 'Trolls stole my iron from the hollow. Kill 2 trolls and their champion, then return what they took.');
+  } else if (quest.status === 'active') {
+    say('Forgehand Bram', 'The hollow still stinks of troll blood and stolen iron. Finish it.');
+  } else if (quest.status === 'turnin') {
+    quest.status = 'done';
+    state.player.gold += 60;
+    if (!state.player.weapons.includes('spiked_mace')) state.player.weapons.push('spiked_mace');
+    if (!state.player.armor.includes('chainmail')) state.player.armor.push('chainmail');
+    state.player.weapon = 'spiked_mace';
+    say('Forgehand Bram', 'Here. Spiked Mace, Chainmail Coat, and 60 gold. You have a proper adventurer\'s kit now.');
+  } else {
+    say('Forgehand Bram', 'This is the strongest loop in the current build. Next comes a larger world.');
+  }
 }
 
 function checkExit(pos) {
@@ -673,24 +759,38 @@ function checkExit(pos) {
 
 function saveGame() {
   localStorage.setItem(SAVE_KEY, JSON.stringify(state));
-  message('Game saved on this device.');
+  say('Guide', 'Game saved on this device.');
   refresh();
 }
 
 function loadGame() {
   const raw = localStorage.getItem(SAVE_KEY);
   if (!raw) {
-    message('No save file found on this device.');
+    say('Guide', 'No save file found on this device.');
     refresh();
     return;
   }
   try {
     state = JSON.parse(raw);
-    message('Save loaded.');
+    if (!state.dialogue) state.dialogue = { speaker: 'Guide', text: 'Save loaded.' };
+    ensureSaveShape();
+    say('Guide', 'Save loaded.');
   } catch {
-    message('Save file is invalid.');
+    say('Guide', 'Save file is invalid.');
   }
   refresh();
+}
+
+function ensureSaveShape() {
+  state.player.inventory.troll_tusk ??= 0;
+  state.player.inventory.troll_iron ??= 0;
+  state.quests.troll_hunt ??= { status: 'locked', troll: 0, troll_champion: 0 };
+  if (!state.worldState.troll_hollow) {
+    state.worldState.troll_hollow = {
+      enemies: MAP_DEFS.troll_hollow.enemies.map((entry) => makeEnemy(entry.kind, entry.pos)),
+      items: MAP_DEFS.troll_hollow.items.map((item) => ({ ...item, pos: [...item.pos] }))
+    };
+  }
 }
 
 function render() {
@@ -711,6 +811,23 @@ function render() {
   });
   drawImage('player', state.player.pos[0], state.player.pos[1]);
   drawHpBar(state.player.pos, state.player.hp, state.player.maxHp);
+  renderMinimap();
+}
+
+function renderMinimap() {
+  const layout = currentMap().layout;
+  minimapCtx.clearRect(0, 0, refs.minimapCanvas.width, refs.minimapCanvas.height);
+  const scale = 8;
+  layout.forEach((row, y) => {
+    [...row].forEach((tile, x) => {
+      minimapCtx.fillStyle = minimapTileColor(tile);
+      minimapCtx.fillRect(x * scale, y * scale, scale, scale);
+    });
+  });
+  currentMap().npcs.forEach((npc) => { minimapCtx.fillStyle = '#e0ba79'; minimapCtx.fillRect(npc.pos[0] * scale + 2, npc.pos[1] * scale + 2, 4, 4); });
+  currentEnemies().forEach((enemy) => { minimapCtx.fillStyle = '#b34343'; minimapCtx.fillRect(enemy.pos[0] * scale + 1, enemy.pos[1] * scale + 1, 6, 6); });
+  minimapCtx.fillStyle = '#5be087';
+  minimapCtx.fillRect(state.player.pos[0] * scale + 1, state.player.pos[1] * scale + 1, 6, 6);
 }
 
 function drawImage(key, tileX, tileY, offsetX = 0, offsetY = 0, width = TILE_SIZE, height = TILE_SIZE) {
@@ -742,7 +859,10 @@ function refresh() {
   refs.inventoryArmor.textContent = `Armor: ${state.player.armor.map((id) => ARMOR[id].name).join(', ')}`;
   refs.inventoryWeapons.textContent = `Weapons: ${state.player.weapons.map((id) => WEAPONS[id].name).join(', ')}`;
   refs.inventoryPotions.textContent = `Potions: ${state.player.potions}`;
-  refs.inventoryLoot.textContent = `Loot: Rat tails ${countItem('rat_tail')}, Bat wings ${countItem('bat_wing')}, Wolf pelts ${countItem('wolf_pelt')}, Dire pelts ${countItem('dire_pelt')}, Orc badges ${countItem('orc_badge')}, Banner ${countItem('stolen_banner')}`;
+  refs.inventoryLoot.textContent = `Loot: Rat tails ${countItem('rat_tail')}, Bat wings ${countItem('bat_wing')}, Wolf pelts ${countItem('wolf_pelt')}, Dire pelts ${countItem('dire_pelt')}, Orc badges ${countItem('orc_badge')}, Troll tusks ${countItem('troll_tusk')}, Troll iron ${countItem('troll_iron')}`;
+  renderQuestList();
+  refs.dialogSpeaker.textContent = state.dialogue?.speaker || 'Guide';
+  refs.dialogText.textContent = state.dialogue?.text || 'Explore Ashenfall.';
   const npc = adjacentNpc();
   refs.interactButton.disabled = !npc;
   refs.interactButton.textContent = npc ? `Talk: ${npc.name}` : 'Interact';
@@ -751,18 +871,56 @@ function refresh() {
   refs.logOutput.innerHTML = state.logLines.map((line) => `<div class="log-entry">${escapeHtml(line)}</div>`).join('');
 }
 
+function renderQuestList() {
+  refs.questList.innerHTML = QUEST_ORDER.map((questId) => `<div class="quest-row"><strong>${QUEST_LABELS[questId]}</strong><span>${escapeHtml(questStatusText(questId))}</span></div>`).join('');
+}
+
 function objectiveText() {
   const quests = state.quests;
   if (quests.cellar_sweep.status === 'available') return 'Objective: Talk to Elder Mara to start the cellar sweep.';
   if (quests.cellar_sweep.status === 'active') return `Objective: Cellar Sweep — Rats ${quests.cellar_sweep.rat}/3, Bats ${quests.cellar_sweep.bat}/2.`;
   if (quests.cellar_sweep.status === 'turnin') return 'Objective: Return to Elder Mara for your cellar reward.';
-  if (quests.wolf_hunt.status === 'available') return 'Objective: Talk to Brann the Hunter for the meadow contract.';
+  if (quests.wolf_hunt.status === 'available') return 'Objective: Talk to Brann for the meadow contract.';
   if (quests.wolf_hunt.status === 'active') return `Objective: Wolf Hunt — Wolves ${quests.wolf_hunt.wolf}/2, Dire Wolves ${quests.wolf_hunt.dire_wolf}/1.`;
   if (quests.wolf_hunt.status === 'turnin') return 'Objective: Report back to Brann for the wolf reward.';
-  if (quests.orc_threat.status === 'available') return 'Objective: Talk to Captain Ivo to begin the orc finale.';
+  if (quests.orc_threat.status === 'available') return 'Objective: Talk to Captain Ivo to begin the orc strike.';
   if (quests.orc_threat.status === 'active') return `Objective: Orc Threat — ${quests.orc_threat.chieftain_defeated ? 'chieftain down' : 'chieftain alive'}, ${quests.orc_threat.banner_collected ? 'banner recovered' : 'banner missing'}.`;
   if (quests.orc_threat.status === 'turnin') return 'Objective: Return the banner to Captain Ivo.';
-  return 'Objective complete: you finished the current start-to-finish prototype loop.';
+  if (quests.troll_hunt.status === 'available') return 'Objective: Talk to Forgehand Bram for the troll hollow contract.';
+  if (quests.troll_hunt.status === 'active') return `Objective: Troll Hollow — Trolls ${quests.troll_hunt.troll}/2, Champion ${quests.troll_hunt.troll_champion}/1.`;
+  if (quests.troll_hunt.status === 'turnin') return 'Objective: Return to Bram for your forged reward.';
+  return 'Objective complete: you finished the current expanded vertical slice.';
+}
+
+function questStatusText(questId) {
+  const quest = state.quests[questId];
+  switch (questId) {
+    case 'cellar_sweep':
+      if (quest.status === 'active') return `Active — Rats ${quest.rat}/3, Bats ${quest.bat}/2`;
+      break;
+    case 'wolf_hunt':
+      if (quest.status === 'active') return `Active — Wolves ${quest.wolf}/2, Dire Wolves ${quest.dire_wolf}/1`;
+      break;
+    case 'orc_threat':
+      if (quest.status === 'active') return `Active — ${quest.chieftain_defeated ? 'chieftain down' : 'chieftain alive'}, ${quest.banner_collected ? 'banner recovered' : 'banner missing'}`;
+      break;
+    case 'troll_hunt':
+      if (quest.status === 'active') return `Active — Trolls ${quest.troll}/2, Champion ${quest.troll_champion}/1`;
+      break;
+    default:
+      break;
+  }
+  return statusLabel(quest.status);
+}
+
+function statusLabel(status) {
+  return {
+    locked: 'Locked',
+    available: 'Available',
+    active: 'Active',
+    turnin: 'Ready to turn in',
+    done: 'Complete'
+  }[status] || 'Unknown';
 }
 
 function nearbyText() {
@@ -784,6 +942,16 @@ function countItem(itemId) {
 function message(text) {
   state.logLines.push(text);
   if (state.logLines.length > LOG_LIMIT) state.logLines.shift();
+}
+
+function say(speaker, text) {
+  state.dialogue = { speaker, text };
+  message(`${speaker}: ${text}`);
+}
+
+function clearDialogue() {
+  if (!state) return;
+  state.dialogue = { speaker: 'Guide', text: 'Explore Ashenfall.' };
 }
 
 function enemyAt(pos, skipIndex = -1) {
@@ -815,6 +983,15 @@ function tileTextureKey(tile) {
   if (tile === '<' || tile === '>') return 'stairs';
   if (tile === '~') return 'water';
   return 'floor';
+}
+
+function minimapTileColor(tile) {
+  if (tile === '#') return '#4f3b2a';
+  if (tile === ',') return '#4b6e37';
+  if (tile === ':') return '#8a704c';
+  if (tile === '<' || tile === '>') return '#b0aba0';
+  if (tile === '~') return '#315b7f';
+  return '#695a47';
 }
 
 function isWalkable(pos) {
