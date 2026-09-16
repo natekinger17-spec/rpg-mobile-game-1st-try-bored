@@ -210,9 +210,7 @@ func _draw() -> void:
 	_draw_actor(player["pos"], TEXTURES["player"], player["hp"], player["max_hp"])
 
 	if quest_complete or game_over:
-		var overlay_text := "Quest complete! Tap Restart to play again." if quest_complete else "You were defeated. Tap Restart to try again."
 		draw_rect(Rect2(Vector2.ZERO, Vector2(16 * TILE_SIZE, 12 * TILE_SIZE)), Color(0, 0, 0, 0.6), true)
-		draw_string(ThemeDB.fallback_font, Vector2(42, 200), overlay_text, HORIZONTAL_ALIGNMENT_LEFT, 430, 24, Color(1, 0.96, 0.78))
 
 func _draw_actor(grid_pos: Vector2i, texture: Texture2D, hp: int, max_hp: int) -> void:
 	var top_left := Vector2(grid_pos.x * TILE_SIZE, grid_pos.y * TILE_SIZE)
@@ -413,7 +411,12 @@ func _total_defense() -> int:
 	return total
 
 func _update_ui() -> void:
-	objective_label.text = "Targets — Rats %d/%d, Bats %d/%d" % [kill_counts["rat"], QUEST_TARGETS["rat"], kill_counts["bat"], QUEST_TARGETS["bat"]]
+	var objective_text := "Targets — Rats %d/%d, Bats %d/%d" % [kill_counts["rat"], QUEST_TARGETS["rat"], kill_counts["bat"], QUEST_TARGETS["bat"]]
+	if quest_complete:
+		objective_text += "\nZone cleared. Tap Restart to run it again."
+	elif game_over:
+		objective_text += "\nYou were defeated. Tap Restart to try again."
+	objective_label.text = objective_text
 	var armor_names := []
 	for armor_id in player["armor"]:
 		armor_names.append(ARMOR_DATA[armor_id]["name"])
