@@ -17,11 +17,12 @@ That gives you:
 
 The playable browser version now includes:
 - retro-styled mobile UI inspired by older PC RPG layouts
-- **Ashenfall town** with healer, trader, blacksmith, acolyte, and quest NPCs
-- **Old Cellar**, **Briar Meadow**, **Orc Den**, **Troll Hollow**, and **Sunken Crypt**
-- bats, rats, wolves, dire wolves, orcs, trolls, skeletons, and boss-style variants
-- grid-based movement, bump combat, loot, gold, XP, leveling, defense, mana, and spells
-- equipment slots, merchant stock display, minimap, quest tracker, and dialogue panel
+- **Ashenfall town** with healer, trader, blacksmith, acolyte, hunter, and elder NPCs
+- **Old Cellar**, **Briar Meadow**, **Orc Den**, **Troll Hollow**, **Sunken Crypt**, and **Webbed Nest**
+- bats, rats, wolves, dire wolves, orcs, trolls, skeletons, spiders, and boss-style variants
+- grid-based movement, melee combat, ranged bow combat, loot, gold, XP, leveling, defense, mana, and spells
+- real equipment and inventory management panels with equip/use controls
+- a shop window with buy buttons for merchant stock
 - local save/load in the browser
 - offline PWA support through the service worker
 
@@ -46,14 +47,6 @@ The earlier Godot files remain in the repo as reference material, but the **web 
 4. Open it once while online so Safari can cache it.
 5. After that, it should keep working offline.
 
-### Other option
-
-Serve the repository as any static site that exposes:
-- `/index.html`
-- `/web/game.js`
-- `/web/styles.css`
-- `/sw.js`
-
 ## Controls
 
 - **Swipe** on the map to move
@@ -61,15 +54,16 @@ Serve the repository as any static site that exposes:
 - walk into enemies to attack
 - tap **Interact** to talk to nearby NPCs
 - tap **Use Potion** or **Use Mana Potion** to recover resources
-- tap **Cast Heal** or **Arcane Burst** once unlocked
+- tap **Cast Heal**, **Arcane Burst**, or **Quick Shot** once unlocked
+- use the equipment, inventory, and shop panels directly from the UI
 - tap **Save** and **Load** to store progress on the device
 
 ## Current quest flow
 
 1. Talk to **Elder Mara**
 2. Clear the cellar rats and bats
-3. Unlock the meadow wolf hunt
-4. Defeat the orc chieftain and recover the banner
-5. Clear **Troll Hollow** for Forgehand Bram
+3. Unlock the meadow wolf hunt with **Brann**
+4. Defeat the orc chieftain and recover the banner for **Captain Ivo**
+5. Clear **Troll Hollow** for **Forgehand Bram**
 6. Talk to **Acolyte Nera** and cleanse the **Sunken Crypt**
-7. Finish the current slice with improved gear, mana tools, and stronger magic
+7. Return to **Brann** to clear the **Webbed Nest** and finish the current slice with ranged gear

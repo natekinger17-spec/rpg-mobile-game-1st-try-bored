@@ -66,23 +66,25 @@
           <div id="questList" class="quest-list"></div>
         </div>
 
-        <div class="dual-grid">
+        <div class="triple-grid">
           <div class="frame card">
             <div class="section-title">Equipment</div>
             <p id="equipmentSlots"></p>
+            <div id="equipmentManager" class="action-list"></div>
           </div>
           <div class="frame card">
-            <div class="section-title">Merchant Stock</div>
-            <p id="merchantStock"></p>
+            <div class="section-title">Inventory</div>
+            <p id="inventoryArmor"></p>
+            <p id="inventoryWeapons"></p>
+            <p id="inventoryPotions"></p>
+            <p id="inventoryLoot"></p>
+            <div id="inventoryManager" class="action-list"></div>
           </div>
-        </div>
-
-        <div class="frame card">
-          <div class="section-title">Inventory</div>
-          <p id="inventoryArmor"></p>
-          <p id="inventoryWeapons"></p>
-          <p id="inventoryPotions"></p>
-          <p id="inventoryLoot"></p>
+          <div class="frame card">
+            <div class="section-title">Shop</div>
+            <p id="merchantStock"></p>
+            <div id="shopManager" class="action-list"></div>
+          </div>
         </div>
 
         <div class="frame card actions">
@@ -98,6 +100,7 @@
         <div class="frame card actions spell-actions">
           <button id="castHealButton" type="button">Cast Heal</button>
           <button id="castBurstButton" type="button">Arcane Burst</button>
+          <button id="quickShotButton" type="button">Quick Shot</button>
         </div>
 
         <div class="frame card dpad-wrap">
