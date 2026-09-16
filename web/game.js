@@ -2,7 +2,7 @@ const TILE_SIZE = 32;
 const SAVE_KEY = 'ashenfall-rpg-save-v4';
 const LOG_LIMIT = 14;
 
-const QUEST_ORDER = ['cellar_sweep', 'wolf_hunt', 'orc_threat', 'troll_hunt', 'crypt_ward', 'spider_brood', 'minotaur_watch'];
+const QUEST_ORDER = ['cellar_sweep', 'wolf_hunt', 'orc_threat', 'troll_hunt', 'crypt_ward', 'spider_brood', 'minotaur_watch', 'ember_chapel'];
 const QUEST_LABELS = {
   cellar_sweep: 'Cellar Sweep',
   wolf_hunt: 'Wolf Hunt',
@@ -10,7 +10,8 @@ const QUEST_LABELS = {
   troll_hunt: 'Troll Hollow',
   crypt_ward: 'Sunken Crypt',
   spider_brood: 'Webbed Nest',
-  minotaur_watch: 'Stone Watch'
+  minotaur_watch: 'Stone Watch',
+  ember_chapel: 'Ember Chapel'
 };
 
 const WEAPONS = {
@@ -29,6 +30,7 @@ const ARMOR = {
   leather_vest: { name: 'Leather Vest', defense: 3, icon: 'leather_vest', slot: 'body' },
   chainmail: { name: 'Chainmail Coat', defense: 4, icon: 'chainmail', slot: 'body' },
   kite_shield: { name: 'Kite Shield', defense: 4, icon: 'buckler', slot: 'offhand' },
+  blessed_mail: { name: 'Blessed Mail', defense: 5, icon: 'chainmail', slot: 'body' },
   ranger_hood: { name: 'Ranger Hood', defense: 2, icon: 'hood', slot: 'head' }
 };
 
@@ -51,12 +53,15 @@ const ITEMS = {
   spider_silk: { name: 'Spider Silk' },
   brood_gland: { name: 'Brood Gland' },
   minotaur_horn: { name: 'Minotaur Horn' },
+  ember_shard: { name: 'Ember Shard' },
+  cinder_relic: { name: 'Cinder Relic' },
   stolen_banner: { name: 'Stolen Banner', icon: 'stolen_banner' }
 };
 
 const SPELLS = {
   minor_heal: { name: 'Cast Heal', cost: 4 },
-  arcane_burst: { name: 'Arcane Burst', cost: 6 }
+  arcane_burst: { name: 'Arcane Burst', cost: 6 },
+  sun_lance: { name: 'Sun Lance', cost: 8 }
 };
 
 const ENEMIES = {
@@ -73,7 +78,9 @@ const ENEMIES = {
   spider: { name: 'Cave Spider', maxHp: 18, attack: 8, icon: 'spider', exp: 20, gold: [12, 18], drop: 'spider_silk' },
   broodmother: { name: 'Broodmother', maxHp: 40, attack: 12, icon: 'spider', exp: 38, gold: [36, 48], drop: 'brood_gland' },
   minotaur: { name: 'Minotaur', maxHp: 28, attack: 10, icon: 'minotaur', exp: 26, gold: [16, 24], drop: 'minotaur_horn' },
-  minotaur_guard: { name: 'Minotaur Guard', maxHp: 46, attack: 13, icon: 'minotaur', exp: 44, gold: [38, 52], drop: 'minotaur_horn' }
+  minotaur_guard: { name: 'Minotaur Guard', maxHp: 46, attack: 13, icon: 'minotaur', exp: 44, gold: [38, 52], drop: 'minotaur_horn' },
+  cultist: { name: 'Ash Cultist', maxHp: 30, attack: 11, icon: 'cultist', exp: 30, gold: [20, 28], drop: 'ember_shard' },
+  ash_priest: { name: 'Ash Priest', maxHp: 50, attack: 15, icon: 'cultist', exp: 52, gold: [42, 58], drop: 'cinder_relic' }
 };
 
 const MAP_DEFS = {
@@ -145,15 +152,25 @@ const MAP_DEFS = {
   stone_watch: {
     name: 'Stone Watch', story: 'A broken frontier tower now held by horned raiders.',
     layout: ['################', '#....,,....##..#', '#..##....,.....#', '#......##...,..#', '#..,....,..##..#', '#..,##........##', '#......,.......#', '#.##.....##....#', '#....,....,....#', '#...##....>....#', '#.<.....##.....#', '################'],
-    npcs: [], exits: [{ pos: [2, 10], targetMap: 'meadow', targetPos: [13, 2], message: 'You withdraw from the ruined watch road.' }],
+    npcs: [], exits: [
+      { pos: [2, 10], targetMap: 'meadow', targetPos: [13, 2], message: 'You withdraw from the ruined watch road.' },
+      { pos: [10, 9], targetMap: 'ember_chapel', targetPos: [4, 9], message: 'You force open the chapel gate beyond the watch.', requiresQuest: 'minotaur_watch', requiresStatus: 'done', blockedMessage: 'The chapel gate will not budge until Stone Watch is fully reclaimed.' }
+    ],
     enemies: [{ kind: 'minotaur', pos: [6, 3] }, { kind: 'minotaur', pos: [11, 2] }, { kind: 'minotaur', pos: [10, 7] }, { kind: 'minotaur_guard', pos: [10, 9] }],
     items: [{ id: 'mana_potion', pos: [4, 8] }, { id: 'small_potion', pos: [12, 6] }]
+  },
+  ember_chapel: {
+    name: 'Ember Chapel', story: 'A scorched shrine where ash cultists guard a dying flame.',
+    layout: ['################', '#....##....,...#', '#..,,....##....#', '#....,.....,>..#', '#..##..~~..##..#', '#......~~......#', '#..,........,..#', '#..##....##....#', '#....,....,....#', '#...>.....##...#', '#.<....##......#', '################'],
+    npcs: [], exits: [{ pos: [2, 10], targetMap: 'stone_watch', targetPos: [10, 9], message: 'You retreat from the heat back toward Stone Watch.' }],
+    enemies: [{ kind: 'cultist', pos: [5, 2] }, { kind: 'cultist', pos: [11, 3] }, { kind: 'cultist', pos: [9, 8] }, { kind: 'ash_priest', pos: [12, 3] }],
+    items: [{ id: 'mana_potion', pos: [4, 6] }, { id: 'small_potion', pos: [8, 7] }]
   }
 };
 
 const TILE_ASSETS = {
   floor: 'assets/tiles/floor.svg', wall: 'assets/tiles/wall.svg', grass: 'assets/tiles/grass.svg', path: 'assets/tiles/path.svg', stairs: 'assets/tiles/stairs.svg', water: 'assets/tiles/water.svg',
-  player: 'assets/actors/player.svg', npc: 'assets/actors/npc.svg', rat: 'assets/actors/rat.svg', bat: 'assets/actors/bat.svg', wolf: 'assets/actors/wolf.svg', orc: 'assets/actors/orc.svg', troll: 'assets/actors/troll.svg', skeleton: 'assets/actors/skeleton.svg', spider: 'assets/actors/spider.svg', minotaur: 'assets/actors/minotaur.svg',
+  player: 'assets/actors/player.svg', npc: 'assets/actors/npc.svg', rat: 'assets/actors/rat.svg', bat: 'assets/actors/bat.svg', wolf: 'assets/actors/wolf.svg', orc: 'assets/actors/orc.svg', troll: 'assets/actors/troll.svg', skeleton: 'assets/actors/skeleton.svg', spider: 'assets/actors/spider.svg', minotaur: 'assets/actors/minotaur.svg', cultist: 'assets/actors/cultist.svg',
   club: 'assets/items/club.svg', knife: 'assets/items/knife.svg', sword: 'assets/items/sword.svg', mace: 'assets/items/mace.svg', bow: 'assets/items/bow.svg',
   tattered_tunic: 'assets/items/tunic.svg', worn_boots: 'assets/items/boots.svg', leather_vest: 'assets/items/vest.svg', buckler: 'assets/items/shield.svg', chainmail: 'assets/items/chainmail.svg', hood: 'assets/items/hood.svg',
   small_potion: 'assets/items/potion.svg', mana_potion: 'assets/items/mana_potion.svg', stolen_banner: 'assets/items/banner.svg', amulet: 'assets/items/amulet.svg'
@@ -177,7 +194,7 @@ async function boot() {
 }
 
 function collectRefs() {
-  ['canvas','minimapCanvas','zoneName','zoneStory','objectiveText','nearbyText','playerLevel','playerHp','playerMana','playerXp','playerGold','playerWeapon','playerDefense','playerMagic','inventoryArmor','inventoryWeapons','inventoryPotions','inventoryLoot','questList','equipmentSlots','merchantStock','equipmentManager','inventoryManager','shopManager','dialogSpeaker','dialogText','closeDialogueButton','interactButton','swapWeaponButton','usePotionButton','useManaPotionButton','castHealButton','castBurstButton','quickShotButton','saveButton','loadButton','newRunButton','logOutput','installButton'].forEach((key) => {
+  ['canvas','minimapCanvas','zoneName','zoneStory','objectiveText','nearbyText','playerLevel','playerHp','playerMana','playerXp','playerGold','playerWeapon','playerDefense','playerMagic','inventoryArmor','inventoryWeapons','inventoryPotions','inventoryLoot','questList','equipmentSlots','merchantStock','equipmentManager','inventoryManager','shopManager','dialogSpeaker','dialogText','closeDialogueButton','interactButton','swapWeaponButton','usePotionButton','useManaPotionButton','castHealButton','castBurstButton','sunLanceButton','quickShotButton','saveButton','loadButton','newRunButton','logOutput','installButton'].forEach((key) => {
     const idMap = { canvas: 'gameCanvas' };
     refs[key] = document.getElementById(idMap[key] || key);
   });
@@ -190,6 +207,7 @@ function bindEvents() {
   refs.useManaPotionButton.addEventListener('click', useManaPotion);
   refs.castHealButton.addEventListener('click', castMinorHeal);
   refs.castBurstButton.addEventListener('click', castArcaneBurst);
+  refs.sunLanceButton.addEventListener('click', castSunLance);
   refs.quickShotButton.addEventListener('click', quickShot);
   refs.saveButton.addEventListener('click', saveGame);
   refs.loadButton.addEventListener('click', loadGame);
@@ -219,7 +237,8 @@ function handleKeyDown(event) {
   else if (key === 'r') useManaPotion();
   else if (key === '1') castMinorHeal();
   else if (key === '2') castArcaneBurst();
-  else if (key === '3') quickShot();
+  else if (key === '3') castSunLance();
+  else if (key === '4') quickShot();
   else if (key === 'f') tryInteract();
 }
 
@@ -248,17 +267,17 @@ function startNewGame() {
       pos: [7, 8], hp: 28, maxHp: 28, mana: 10, baseMaxMana: 10, maxMana: 10, level: 1, exp: 0, nextExp: 12, gold: 10,
       weapon: 'club', weapons: ['club'], armorOwned: ['tattered_tunic', 'worn_boots'], charmsOwned: [],
       equipment: { head: null, body: 'tattered_tunic', feet: 'worn_boots', offhand: null, charm: null },
-      potions: 1, manaPotions: 0, spells: ['minor_heal'], inventory: { rat_tail: 0, bat_wing: 0, wolf_pelt: 0, dire_pelt: 0, orc_badge: 0, troll_tusk: 0, troll_iron: 0, bone_token: 0, crypt_relic: 0, spider_silk: 0, brood_gland: 0, minotaur_horn: 0, stolen_banner: 0 }
+      potions: 1, manaPotions: 0, spells: ['minor_heal'], inventory: { rat_tail: 0, bat_wing: 0, wolf_pelt: 0, dire_pelt: 0, orc_badge: 0, troll_tusk: 0, troll_iron: 0, bone_token: 0, crypt_relic: 0, spider_silk: 0, brood_gland: 0, minotaur_horn: 0, ember_shard: 0, cinder_relic: 0, stolen_banner: 0 }
     },
     quests: {
       cellar_sweep: { status: 'available', rat: 0, bat: 0 }, wolf_hunt: { status: 'locked', wolf: 0, dire_wolf: 0 }, orc_threat: { status: 'locked', chieftain_defeated: false, banner_collected: false },
-      troll_hunt: { status: 'locked', troll: 0, troll_champion: 0 }, crypt_ward: { status: 'locked', skeleton: 0, bone_guard: 0, relic_collected: false }, spider_brood: { status: 'locked', spider: 0, broodmother: 0 }, minotaur_watch: { status: 'locked', minotaur: 0, minotaur_guard: 0 }
+      troll_hunt: { status: 'locked', troll: 0, troll_champion: 0 }, crypt_ward: { status: 'locked', skeleton: 0, bone_guard: 0, relic_collected: false }, spider_brood: { status: 'locked', spider: 0, broodmother: 0 }, minotaur_watch: { status: 'locked', minotaur: 0, minotaur_guard: 0 }, ember_chapel: { status: 'locked', cultist: 0, ash_priest: 0 }
     },
     worldState: Object.fromEntries(Object.keys(MAP_DEFS).map((mapId) => [mapId, { enemies: MAP_DEFS[mapId].enemies.map((entry) => makeEnemy(entry.kind, entry.pos)), items: MAP_DEFS[mapId].items.map((item) => ({ ...item, pos: [...item.pos] })) }])),
     logLines: [], dialogue: { speaker: 'Guide', text: 'Talk to Elder Mara first. Town, magic, shops, and gear management are all live.' }
   };
-  message('Ashenfall now has equipment management, a real shop list, and a full late-game route to Stone Watch.');
-  message('Use Quick Shot after you earn or buy the Hunter Bow, then push on toward the minotaur road.');
+  message('Ashenfall now runs from the cellar all the way through Stone Watch and the Ember Chapel.');
+  message('Push from Quick Shot into Sun Lance as you finish the late-game route.');
   refresh();
 }
 
@@ -391,6 +410,11 @@ function recordEnemyDefeat(kind, pos) {
     if (kind === 'minotaur_guard') state.quests.minotaur_watch.minotaur_guard += 1;
     if (state.quests.minotaur_watch.minotaur >= 3 && state.quests.minotaur_watch.minotaur_guard >= 1) { state.quests.minotaur_watch.status = 'turnin'; message('Stone Watch is reclaimed. Report back to Captain Ivo.'); }
   }
+  if (state.quests.ember_chapel.status === 'active') {
+    if (kind === 'cultist') state.quests.ember_chapel.cultist += 1;
+    if (kind === 'ash_priest') state.quests.ember_chapel.ash_priest += 1;
+    if (state.quests.ember_chapel.cultist >= 3 && state.quests.ember_chapel.ash_priest >= 1) { state.quests.ember_chapel.status = 'turnin'; message('The Ember Chapel is purged. Return to Acolyte Nera.'); }
+  }
 }
 
 function updateOrcQuestState() { if (state.quests.orc_threat.status === 'active' && state.quests.orc_threat.chieftain_defeated && state.quests.orc_threat.banner_collected) { state.quests.orc_threat.status = 'turnin'; message('Return the banner to Captain Ivo.'); } }
@@ -434,10 +458,25 @@ function castArcaneBurst() {
   endPlayerAction();
 }
 
+function castSunLance() {
+  clearDialogue();
+  if (!state.player.spells.includes('sun_lance')) { message('You have not learned Sun Lance yet.'); return refresh(); }
+  if (state.player.mana < SPELLS.sun_lance.cost) { message('Not enough mana for Sun Lance.'); return refresh(); }
+  const targetIndex = findLineTarget(4);
+  if (targetIndex === -1) { message('No clear target in a straight line for Sun Lance.'); return refresh(); }
+  state.player.mana -= SPELLS.sun_lance.cost;
+  const enemy = currentEnemies()[targetIndex];
+  const damage = 11 + spellPowerBonus();
+  enemy.hp -= damage;
+  say('Acolyte Nera', `Sunfire lances through ${enemy.name} for ${damage} damage.`);
+  if (enemy.hp <= 0) defeatEnemy(targetIndex, enemy);
+  endPlayerAction();
+}
+
 function quickShot() {
   clearDialogue();
   if (state.player.weapon !== 'hunter_bow') { message('Equip the Hunter Bow to use Quick Shot.'); return refresh(); }
-  const targetIndex = findRangedTarget();
+  const targetIndex = findLineTarget(WEAPONS.hunter_bow.range);
   if (targetIndex === -1) { message('No clear target in a straight line for Quick Shot.'); return refresh(); }
   const enemy = currentEnemies()[targetIndex];
   const damage = randInt(WEAPONS.hunter_bow.minDamage, WEAPONS.hunter_bow.maxDamage) + 2;
@@ -448,10 +487,10 @@ function quickShot() {
 }
 
 function adjacentEnemyIndexes() { return Object.values(DIRECTIONS).map(([dx, dy]) => enemyAt([state.player.pos[0] + dx, state.player.pos[1] + dy])).filter((index, pos, arr) => index !== -1 && arr.indexOf(index) === pos); }
-function findRangedTarget() {
+function findLineTarget(range) {
   const dirs = Object.values(DIRECTIONS);
   for (const [dx, dy] of dirs) {
-    for (let step = 1; step <= WEAPONS.hunter_bow.range; step += 1) {
+    for (let step = 1; step <= range; step += 1) {
       const pos = [state.player.pos[0] + dx * step, state.player.pos[1] + dy * step];
       if (!inBounds(pos) || tileAt(pos) === '#') break;
       const index = enemyAt(pos);
@@ -520,12 +559,18 @@ function interactSmith() {
 
 function interactAcolyte() {
   const quest = state.quests.crypt_ward;
+  const chapelQuest = state.quests.ember_chapel;
   if (state.quests.cellar_sweep.status === 'available') return say('Acolyte Nera', 'Elder Mara needs the cellar purged first.');
   if (state.quests.cellar_sweep.status !== 'done') return say('Acolyte Nera', 'When the cellar is safe, I will teach you how to mend yourself with mana.');
   if (quest.status === 'locked') return say('Acolyte Nera', 'I have shown you Cast Heal. Return after Bram\'s troll trouble is settled for a deeper rite.');
   if (quest.status === 'available') { quest.status = 'active'; return say('Acolyte Nera', 'Descend into the Sunken Crypt. Break 2 skeletons, destroy the Bone Guard, and recover the relic below.'); }
   if (quest.status === 'active') return say('Acolyte Nera', quest.relic_collected ? 'The relic is in your pack. Finish cleansing the dead if any remain.' : 'The dead below still stir.');
   if (quest.status === 'turnin') { quest.status = 'done'; if (!state.player.spells.includes('arcane_burst')) state.player.spells.push('arcane_burst'); collectItemById('sun_amulet'); state.player.gold += 70; state.quests.spider_brood.status = 'available'; return say('Acolyte Nera', 'Take the Sun Amulet, 70 gold, and the rite of Arcane Burst.'); }
+  if (state.quests.minotaur_watch.status !== 'done') return say('Acolyte Nera', 'Captain Ivo must secure Stone Watch before I dare reopen the chapel rites.');
+  if (chapelQuest.status === 'locked') { chapelQuest.status = 'available'; return say('Acolyte Nera', 'The Ember Chapel has stirred beyond Stone Watch. Speak to me once more if you are ready to purge it.'); }
+  if (chapelQuest.status === 'available') { chapelQuest.status = 'active'; return say('Acolyte Nera', 'Purge 3 ash cultists and their priest in the Ember Chapel, then return to me for the Sun Lance rite.'); }
+  if (chapelQuest.status === 'active') return say('Acolyte Nera', 'The shrine flame still burns black. Finish the purge.');
+  if (chapelQuest.status === 'turnin') { chapelQuest.status = 'done'; if (!state.player.spells.includes('sun_lance')) state.player.spells.push('sun_lance'); collectItemById('blessed_mail'); state.player.gold += 150; return say('Acolyte Nera', 'You have earned Blessed Mail, 150 gold, and the rite of Sun Lance.'); }
   say('Acolyte Nera', 'Your magic is steady now.');
 }
 
@@ -561,10 +606,10 @@ function ensureSaveShape() {
   state.player.mana ??= 10; state.player.baseMaxMana ??= state.player.maxMana ?? 10; state.player.maxMana ??= state.player.baseMaxMana;
   state.player.armorOwned ??= state.player.armor ?? ['tattered_tunic', 'worn_boots']; state.player.charmsOwned ??= []; state.player.equipment ??= { head: null, body: 'tattered_tunic', feet: 'worn_boots', offhand: state.player.armorOwned.includes('buckler') ? 'buckler' : null, charm: null };
   state.player.equipment.head ??= null; state.player.manaPotions ??= 0; state.player.spells ??= ['minor_heal'];
-  ['troll_hunt','crypt_ward','spider_brood','minotaur_watch'].forEach((questId) => { if (!state.quests[questId]) state.quests[questId] = questId === 'troll_hunt' ? { status: 'locked', troll: 0, troll_champion: 0 } : questId === 'crypt_ward' ? { status: 'locked', skeleton: 0, bone_guard: 0, relic_collected: false } : questId === 'spider_brood' ? { status: 'locked', spider: 0, broodmother: 0 } : { status: 'locked', minotaur: 0, minotaur_guard: 0 }; });
-  ['troll_hollow','sunken_crypt','webbed_nest','stone_watch'].forEach((mapId) => { if (!state.worldState[mapId]) state.worldState[mapId] = { enemies: MAP_DEFS[mapId].enemies.map((entry) => makeEnemy(entry.kind, entry.pos)), items: MAP_DEFS[mapId].items.map((item) => ({ ...item, pos: [...item.pos] })) }; });
+  ['troll_hunt','crypt_ward','spider_brood','minotaur_watch','ember_chapel'].forEach((questId) => { if (!state.quests[questId]) state.quests[questId] = questId === 'troll_hunt' ? { status: 'locked', troll: 0, troll_champion: 0 } : questId === 'crypt_ward' ? { status: 'locked', skeleton: 0, bone_guard: 0, relic_collected: false } : questId === 'spider_brood' ? { status: 'locked', spider: 0, broodmother: 0 } : questId === 'minotaur_watch' ? { status: 'locked', minotaur: 0, minotaur_guard: 0 } : { status: 'locked', cultist: 0, ash_priest: 0 }; });
+  ['troll_hollow','sunken_crypt','webbed_nest','stone_watch','ember_chapel'].forEach((mapId) => { if (!state.worldState[mapId]) state.worldState[mapId] = { enemies: MAP_DEFS[mapId].enemies.map((entry) => makeEnemy(entry.kind, entry.pos)), items: MAP_DEFS[mapId].items.map((item) => ({ ...item, pos: [...item.pos] })) }; });
   state.dialogue ??= { speaker: 'Guide', text: 'Save loaded.' };
-  ['bone_token','crypt_relic','spider_silk','brood_gland','minotaur_horn'].forEach((itemId) => { state.player.inventory[itemId] ??= 0; });
+  ['bone_token','crypt_relic','spider_silk','brood_gland','minotaur_horn','ember_shard','cinder_relic'].forEach((itemId) => { state.player.inventory[itemId] ??= 0; });
   recalculateManaPool();
 }
 
@@ -601,13 +646,13 @@ function refresh() {
   refs.inventoryArmor.textContent = `Armor: ${state.player.armorOwned.map((id) => ARMOR[id].name).join(', ')}`;
   refs.inventoryWeapons.textContent = `Weapons: ${state.player.weapons.map((id) => WEAPONS[id].name).join(', ')}`;
   refs.inventoryPotions.textContent = `Potions: ${state.player.potions} | Mana Potions: ${state.player.manaPotions}`;
-  refs.inventoryLoot.textContent = `Loot: Rat ${countItem('rat_tail')}, Bat ${countItem('bat_wing')}, Wolf ${countItem('wolf_pelt')}, Dire ${countItem('dire_pelt')}, Orc ${countItem('orc_badge')}, Troll ${countItem('troll_tusk')}, Bone ${countItem('bone_token')}, Silk ${countItem('spider_silk')}, Horn ${countItem('minotaur_horn')}`;
+  refs.inventoryLoot.textContent = `Loot: Rat ${countItem('rat_tail')}, Bat ${countItem('bat_wing')}, Wolf ${countItem('wolf_pelt')}, Dire ${countItem('dire_pelt')}, Orc ${countItem('orc_badge')}, Troll ${countItem('troll_tusk')}, Bone ${countItem('bone_token')}, Silk ${countItem('spider_silk')}, Horn ${countItem('minotaur_horn')}, Ember ${countItem('ember_shard')}`;
   refs.equipmentSlots.textContent = `Head: ${slotName('head')}\nBody: ${slotName('body')}\nFeet: ${slotName('feet')}\nOffhand: ${slotName('offhand')}\nCharm: ${slotName('charm')}\nWeapon: ${WEAPONS[state.player.weapon].name}`;
   refs.merchantStock.textContent = merchantStockText();
   renderQuestList(); renderEquipmentManager(); renderInventoryManager(); renderShopManager();
   refs.dialogSpeaker.textContent = state.dialogue?.speaker || 'Guide'; refs.dialogText.textContent = state.dialogue?.text || 'Explore Ashenfall.';
   const npc = adjacentNpc(); refs.interactButton.disabled = !npc; refs.interactButton.textContent = npc ? `Talk: ${npc.name}` : 'Interact';
-  refs.swapWeaponButton.disabled = state.player.weapons.length <= 1; refs.usePotionButton.disabled = state.player.potions <= 0 || state.player.hp >= state.player.maxHp; refs.useManaPotionButton.disabled = state.player.manaPotions <= 0 || state.player.mana >= state.player.maxMana; refs.castHealButton.disabled = !state.player.spells.includes('minor_heal') || state.player.mana < SPELLS.minor_heal.cost || state.player.hp >= state.player.maxHp; refs.castBurstButton.disabled = !state.player.spells.includes('arcane_burst') || state.player.mana < SPELLS.arcane_burst.cost || adjacentEnemyIndexes().length === 0; refs.quickShotButton.disabled = state.player.weapon !== 'hunter_bow' || findRangedTarget() === -1;
+  refs.swapWeaponButton.disabled = state.player.weapons.length <= 1; refs.usePotionButton.disabled = state.player.potions <= 0 || state.player.hp >= state.player.maxHp; refs.useManaPotionButton.disabled = state.player.manaPotions <= 0 || state.player.mana >= state.player.maxMana; refs.castHealButton.disabled = !state.player.spells.includes('minor_heal') || state.player.mana < SPELLS.minor_heal.cost || state.player.hp >= state.player.maxHp; refs.castBurstButton.disabled = !state.player.spells.includes('arcane_burst') || state.player.mana < SPELLS.arcane_burst.cost || adjacentEnemyIndexes().length === 0; refs.sunLanceButton.disabled = !state.player.spells.includes('sun_lance') || state.player.mana < SPELLS.sun_lance.cost || findLineTarget(4) === -1; refs.quickShotButton.disabled = state.player.weapon !== 'hunter_bow' || findLineTarget(WEAPONS.hunter_bow.range) === -1;
   refs.logOutput.innerHTML = state.logLines.map((line) => `<div class="log-entry">${escapeHtml(line)}</div>`).join('');
 }
 
@@ -653,7 +698,11 @@ function objectiveText() {
   if (q.minotaur_watch.status === 'available') return 'Objective: Talk to Captain Ivo to reclaim Stone Watch.';
   if (q.minotaur_watch.status === 'active') return `Objective: Stone Watch — Minotaurs ${q.minotaur_watch.minotaur}/3, Guard Captain ${q.minotaur_watch.minotaur_guard}/1.`;
   if (q.minotaur_watch.status === 'turnin') return 'Objective: Return to Captain Ivo for the Stone Watch reward.';
-  return 'Objective complete: Ashenfall holds through the Stone Watch frontier.';
+  if (q.minotaur_watch.status === 'done' && q.ember_chapel.status === 'locked') return 'Objective: Talk to Acolyte Nera about the Ember Chapel rites.';
+  if (q.ember_chapel.status === 'available') return 'Objective: Talk to Acolyte Nera to begin the Ember Chapel purge.';
+  if (q.ember_chapel.status === 'active') return `Objective: Ember Chapel — Cultists ${q.ember_chapel.cultist}/3, Ash Priest ${q.ember_chapel.ash_priest}/1.`;
+  if (q.ember_chapel.status === 'turnin') return 'Objective: Return to Acolyte Nera for the Sun Lance reward.';
+  return 'Objective complete: Ashenfall holds through the Ember Chapel.';
 }
 
 function questStatusText(questId) {
@@ -665,6 +714,7 @@ function questStatusText(questId) {
   if (questId === 'crypt_ward' && q.status === 'active') return `Active — Skeletons ${q.skeleton}/2, Bone Guard ${q.bone_guard}/1, Relic ${q.relic_collected ? 'found' : 'missing'}`;
   if (questId === 'spider_brood' && q.status === 'active') return `Active — Spiders ${q.spider}/2, Broodmother ${q.broodmother}/1`;
   if (questId === 'minotaur_watch' && q.status === 'active') return `Active — Minotaurs ${q.minotaur}/3, Guard Captain ${q.minotaur_guard}/1`;
+  if (questId === 'ember_chapel' && q.status === 'active') return `Active — Cultists ${q.cultist}/3, Ash Priest ${q.ash_priest}/1`;
   return ({ locked: 'Locked', available: 'Available', active: 'Active', turnin: 'Ready to turn in', done: 'Complete' })[q.status] || 'Unknown';
 }
 

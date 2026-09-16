@@ -83,7 +83,7 @@ canvas { width: 100%; image-rendering: pixelated; display: block; background: #0
 .quest-row span, .action-row span { color: var(--muted); font-size: 0.92rem; display: block; margin-bottom: 6px; }
 .action-row button { width: 100%; }
 .actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-.spell-actions { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.spell-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .dpad-wrap { text-align: center; }
 .dpad { display: grid; grid-template-columns: repeat(3, minmax(64px, 1fr)); gap: 8px; }
 .dpad button { font-size: 1.2rem; }
@@ -101,7 +101,7 @@ canvas { width: 100%; image-rendering: pixelated; display: block; background: #0
 @media (max-width: 900px) { .triple-grid { grid-template-columns: 1fr; } }
 @media (max-width: 640px) {
   .hud-grid { grid-template-columns: 1fr; }
-  .spell-actions { grid-template-columns: 1fr; }
+  .spell-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (min-width: 980px) {
   .layout { grid-template-columns: minmax(0, 540px) minmax(0, 1fr); align-items: start; }
