@@ -1,70 +1,75 @@
 # rpg-mobile-game-1st-try-bored
 
-An **offline, single-player, Tibia-inspired mobile RPG vertical slice** built in **Godot 4**.
+An **iPhone-friendly offline web RPG vertical slice** inspired by classic Tibia-style PvE.
 
-## Why Godot
+## Why the web/PWA route
 
-Godot is the best fit here because it gives this project:
-- strong 2D support for a top-down RPG
-- easy mobile export targets later
-- a lightweight offline-first workflow
-- fast iteration without license friction
+You said you want to **do and run this from your iPhone**, so the repo now includes a **no-build browser version** that works well in Safari and can be installed to the home screen.
+
+That gives you:
+- direct play on iPhone
+- no native app packaging required to test
+- offline play after the first load through the included service worker
+- a repo that can be hosted on GitHub Pages or any static host
 
 ## Current game slice
 
-The repo now contains a complete start-to-finish prototype loop:
-- **Ashenfall town hub** with quest NPCs, healer, and trader
-- **Old Cellar** starter dungeon with rats, bats, rough gear, and potion pickup
-- **Briar Meadow** wolf zone with a stronger dire wolf encounter
-- **Orc Den** finale with an orc chieftain boss-style fight
-- grid-based movement and collision
-- turn-like bump combat
-- gear upgrades including club, knife, buckler, leather vest, and iron sword
-- gold, consumables, loot trophies, experience, leveling, and defense
-- quest chain with rewards and progression unlocks
-- save/load support using `user://savegame.json`
-- mobile-friendly on-screen controls plus swipe and keyboard input
+The playable loop includes:
+- **Ashenfall town** with healer, trader, and quest NPCs
+- **Old Cellar** with bats, rats, starter gear, and potion pickup
+- **Briar Meadow** with wolves and a dire wolf
+- **Orc Den** with an orc chieftain finale
+- grid-based movement and bump combat
+- gear upgrades, gold, consumables, trophies, XP, levels, and defense
+- quest progression from starter cellar contract to the orc finale
+- touch-friendly controls for iPhone
+- local save/load in the browser
+- installable PWA support
 
 ## Project structure
 
-- `/project.godot` — Godot project configuration
-- `/scenes/Main.tscn` — main scene entry point
-- `/scripts/main.gd` — full prototype loop
-- `/assets/actors` — placeholder actor art
-- `/assets/items` — placeholder item art
-- `/assets/tiles` — placeholder tile art
+- `/index.html` — browser entry point
+- `/web/game.js` — game logic
+- `/web/styles.css` — mobile UI styling
+- `/manifest.webmanifest` — install metadata
+- `/sw.js` — offline cache support
+- `/assets/` — placeholder pixel-style art
 
-## How to run
+The earlier Godot prototype files are still in the repo as a reference build, but the **web version is now the easiest way to run this from iPhone**.
 
-1. Install **Godot 4.x**.
-2. Open `/home/runner/work/rpg-mobile-game-1st-try-bored/rpg-mobile-game-1st-try-bored`.
-3. Run the default scene.
+## How to run on iPhone
+
+### Best option: GitHub Pages
+
+1. Enable **GitHub Pages** for this repository using the repository root.
+2. Open the Pages URL in **Safari** on your iPhone.
+3. Tap **Share → Add to Home Screen**.
+4. Open it once while online so Safari caches the app.
+5. After that, it should continue working offline.
+
+### Other option
+
+Serve the repository as a static site from any host that exposes:
+- `/index.html`
+- `/web/game.js`
+- `/web/styles.css`
 
 ## Controls
 
-- **Swipe** on mobile to move one tile
-- **Arrow keys / WASD** to move on desktop
-- Walk into enemies to attack
-- **F** or **Interact** to talk to nearby NPCs
-- **Q** or **Swap Weapon** to cycle weapons
-- **E** or **Use Potion** to heal
-- **F5** or **Save** to save
-- **F9** or **Load** to load
-- **New Run** to reset the whole game state
+- **Swipe** on the map to move
+- or use the on-screen **direction buttons**
+- walk into enemies to attack
+- tap **Interact** to talk to nearby NPCs
+- tap **Swap Weapon** to cycle weapons
+- tap **Use Potion** to heal
+- tap **Save** and **Load** to store progress on the device
 
-## Prototype quest flow
+## Quest flow
 
-1. Talk to **Elder Mara** in town
-2. Clear the **cellar rats and bats**
-3. Return for reward and unlock the **wolf hunt**
-4. Clear **wolves and the dire wolf** in the meadow
-5. Return for reward and unlock the **orc finale**
-6. Defeat the **Orc Chieftain**, recover the banner, and turn it in
-
-## Best next expansions
-
-- split data, combat, map state, and UI into separate scripts/scenes
-- add NPC dialog windows instead of log-only conversations
-- add additional maps, classes, spells, ranged combat, and shops
-- add save slots and persistent world progression
-- begin planning optional co-op after the solo loop is stable
+1. Talk to **Elder Mara**
+2. Clear the cellar rats and bats
+3. Turn in the quest
+4. Take Brann's wolf contract
+5. Clear the meadow
+6. Take Captain Ivo's orc quest
+7. Kill the chieftain, grab the banner, and return it
