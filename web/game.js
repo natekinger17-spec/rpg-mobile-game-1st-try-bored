@@ -100,13 +100,13 @@ const MAP_DEFS = {
   },
   meadow: {
     name: 'Briar Meadow', story: 'Roadside fields where wolves and raiders roam.',
-    layout: ['################', '#,,,,,,,,,,,,,,#', '#,,~~~,,...>.,,#', '#,,~~~~,......,#', '#,:::::,,..,,.,#', '#<:....,,,,...:#', '#,:....,,,,...:#', '#,:..,,....,..:#', '#,:..,,....,>..#', '#,::>##...,,.>#', '#,,,,,,,,,,,,,,#', '################'],
+    layout: ['################', '#,,,,,,,,,,,,,,#', '#,,~~~,,...>.,,#', '#,,~~~~,......,#', '#,:::::,,..,,.,#', '#<:....,,,,...:#', '#,:....,,,,...:#', '#,:..,,....,..:#', '#,:..,,....,>..#', '#,::>##...,,..>#', '#,,,,,,,,,,,,,,#', '################'],
     npcs: [], exits: [
       { pos: [1, 5], targetMap: 'town', targetPos: [11, 9], message: 'You head back through the town road.' },
       { pos: [11, 2], targetMap: 'orc_den', targetPos: [2, 10], message: 'You enter the cracked cave mouth.' },
       { pos: [12, 8], targetMap: 'troll_hollow', targetPos: [2, 10], message: 'You push through the briars into troll country.' },
       { pos: [4, 9], targetMap: 'sunken_crypt', targetPos: [2, 10], message: 'You descend through a cracked burial hatch.' },
-      { pos: [13, 9], targetMap: 'webbed_nest', targetPos: [2, 10], message: 'You duck under torn webbing into a spider nest.' }
+      { pos: [14, 9], targetMap: 'webbed_nest', targetPos: [2, 10], message: 'You duck under torn webbing into a spider nest.' }
     ],
     enemies: [{ kind: 'wolf', pos: [5, 5] }, { kind: 'wolf', pos: [9, 7] }, { kind: 'dire_wolf', pos: [12, 4] }, { kind: 'orc', pos: [10, 6] }],
     items: [{ id: 'small_potion', pos: [4, 8] }, { id: 'buckler', pos: [10, 8] }, { id: 'mana_potion', pos: [6, 7] }]
@@ -132,7 +132,7 @@ const MAP_DEFS = {
   webbed_nest: {
     name: 'Webbed Nest', story: 'Sticky tunnels full of hunting spiders.',
     layout: ['################', '#..............#', '#..##....##....#', '#...,,,,.......#', '#..,~~~~,,.....#', '#.....##.......#', '#..##......##..#', '#.....,,,,.....#', '#...##....##...#', '#.......>......#', '#.<.....##.....#', '################'],
-    npcs: [], exits: [{ pos: [2, 10], targetMap: 'meadow', targetPos: [13, 9], message: 'You break free of the webbed tunnels.' }],
+    npcs: [], exits: [{ pos: [2, 10], targetMap: 'meadow', targetPos: [14, 9], message: 'You break free of the webbed tunnels.' }],
     enemies: [{ kind: 'spider', pos: [6, 3] }, { kind: 'spider', pos: [11, 5] }, { kind: 'broodmother', pos: [9, 9] }], items: [{ id: 'mana_potion', pos: [4, 7] }, { id: 'small_potion', pos: [12, 3] }]
   }
 };
