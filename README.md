@@ -18,11 +18,12 @@ That gives you:
 The playable browser version now includes:
 - retro-styled mobile UI inspired by older PC RPG layouts
 - **Ashenfall town** with healer, trader, blacksmith, acolyte, hunter, and elder NPCs
-- **Old Cellar**, **Briar Meadow**, **Orc Den**, **Troll Hollow**, **Sunken Crypt**, and **Webbed Nest**
-- bats, rats, wolves, dire wolves, orcs, trolls, skeletons, spiders, and boss-style variants
+- **Old Cellar**, **Briar Meadow**, **Orc Den**, **Troll Hollow**, **Sunken Crypt**, **Webbed Nest**, and **Stone Watch**
+- bats, rats, wolves, dire wolves, orcs, trolls, skeletons, spiders, minotaurs, and boss-style variants
 - grid-based movement, melee combat, ranged bow combat, loot, gold, XP, leveling, defense, mana, and spells
 - real equipment and inventory management panels with equip/use controls
 - a shop window with buy buttons for merchant stock
+- late-game frontier rewards including the **Soldier Blade** and **Kite Shield**
 - local save/load in the browser
 - offline PWA support through the service worker
 
@@ -66,4 +67,5 @@ The earlier Godot files remain in the repo as reference material, but the **web 
 4. Defeat the orc chieftain and recover the banner for **Captain Ivo**
 5. Clear **Troll Hollow** for **Forgehand Bram**
 6. Talk to **Acolyte Nera** and cleanse the **Sunken Crypt**
-7. Return to **Brann** to clear the **Webbed Nest** and finish the current slice with ranged gear
+7. Return to **Brann** to clear the **Webbed Nest** and claim ranged gear
+8. Report to **Captain Ivo** and reclaim **Stone Watch** from the minotaurs

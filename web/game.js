@@ -2,14 +2,15 @@ const TILE_SIZE = 32;
 const SAVE_KEY = 'ashenfall-rpg-save-v4';
 const LOG_LIMIT = 14;
 
-const QUEST_ORDER = ['cellar_sweep', 'wolf_hunt', 'orc_threat', 'troll_hunt', 'crypt_ward', 'spider_brood'];
+const QUEST_ORDER = ['cellar_sweep', 'wolf_hunt', 'orc_threat', 'troll_hunt', 'crypt_ward', 'spider_brood', 'minotaur_watch'];
 const QUEST_LABELS = {
   cellar_sweep: 'Cellar Sweep',
   wolf_hunt: 'Wolf Hunt',
   orc_threat: 'Orc Threat',
   troll_hunt: 'Troll Hollow',
   crypt_ward: 'Sunken Crypt',
-  spider_brood: 'Webbed Nest'
+  spider_brood: 'Webbed Nest',
+  minotaur_watch: 'Stone Watch'
 };
 
 const WEAPONS = {
@@ -17,6 +18,7 @@ const WEAPONS = {
   knife: { name: 'Rusty Knife', minDamage: 4, maxDamage: 6, crit: 0.15, icon: 'knife', range: 1 },
   iron_sword: { name: 'Iron Sword', minDamage: 6, maxDamage: 9, crit: 0.12, icon: 'sword', range: 1 },
   spiked_mace: { name: 'Spiked Mace', minDamage: 8, maxDamage: 12, crit: 0.1, icon: 'mace', range: 1 },
+  soldier_blade: { name: 'Soldier Blade', minDamage: 10, maxDamage: 14, crit: 0.14, icon: 'sword', range: 1 },
   hunter_bow: { name: 'Hunter Bow', minDamage: 7, maxDamage: 11, crit: 0.18, icon: 'bow', range: 4 }
 };
 
@@ -26,6 +28,7 @@ const ARMOR = {
   buckler: { name: 'Buckler', defense: 2, icon: 'buckler', slot: 'offhand' },
   leather_vest: { name: 'Leather Vest', defense: 3, icon: 'leather_vest', slot: 'body' },
   chainmail: { name: 'Chainmail Coat', defense: 4, icon: 'chainmail', slot: 'body' },
+  kite_shield: { name: 'Kite Shield', defense: 4, icon: 'buckler', slot: 'offhand' },
   ranger_hood: { name: 'Ranger Hood', defense: 2, icon: 'hood', slot: 'head' }
 };
 
@@ -47,6 +50,7 @@ const ITEMS = {
   crypt_relic: { name: 'Crypt Relic' },
   spider_silk: { name: 'Spider Silk' },
   brood_gland: { name: 'Brood Gland' },
+  minotaur_horn: { name: 'Minotaur Horn' },
   stolen_banner: { name: 'Stolen Banner', icon: 'stolen_banner' }
 };
 
@@ -67,7 +71,9 @@ const ENEMIES = {
   skeleton: { name: 'Skeleton', maxHp: 22, attack: 7, icon: 'skeleton', exp: 18, gold: [10, 16], drop: 'bone_token' },
   bone_guard: { name: 'Bone Guard', maxHp: 32, attack: 11, icon: 'skeleton', exp: 32, gold: [28, 38], drop: 'crypt_relic' },
   spider: { name: 'Cave Spider', maxHp: 18, attack: 8, icon: 'spider', exp: 20, gold: [12, 18], drop: 'spider_silk' },
-  broodmother: { name: 'Broodmother', maxHp: 40, attack: 12, icon: 'spider', exp: 38, gold: [36, 48], drop: 'brood_gland' }
+  broodmother: { name: 'Broodmother', maxHp: 40, attack: 12, icon: 'spider', exp: 38, gold: [36, 48], drop: 'brood_gland' },
+  minotaur: { name: 'Minotaur', maxHp: 28, attack: 10, icon: 'minotaur', exp: 26, gold: [16, 24], drop: 'minotaur_horn' },
+  minotaur_guard: { name: 'Minotaur Guard', maxHp: 46, attack: 13, icon: 'minotaur', exp: 44, gold: [38, 52], drop: 'minotaur_horn' }
 };
 
 const MAP_DEFS = {
@@ -100,13 +106,14 @@ const MAP_DEFS = {
   },
   meadow: {
     name: 'Briar Meadow', story: 'Roadside fields where wolves and raiders roam.',
-    layout: ['################', '#,,,,,,,,,,,,,,#', '#,,~~~,,...>.,,#', '#,,~~~~,......,#', '#,:::::,,..,,.,#', '#<:....,,,,...:#', '#,:....,,,,...:#', '#,:..,,....,..:#', '#,:..,,....,>..#', '#,::>##...,,..>#', '#,,,,,,,,,,,,,,#', '################'],
+    layout: ['################', '#,,,,,,,,,,,,,,#', '#,,~~~,,...>.>,#', '#,,~~~~,......,#', '#,:::::,,..,,.,#', '#<:....,,,,...:#', '#,:....,,,,...:#', '#,:..,,....,..:#', '#,:..,,....,>..#', '#,::>##...,,..>#', '#,,,,,,,,,,,,,,#', '################'],
     npcs: [], exits: [
       { pos: [1, 5], targetMap: 'town', targetPos: [11, 9], message: 'You head back through the town road.' },
       { pos: [11, 2], targetMap: 'orc_den', targetPos: [2, 10], message: 'You enter the cracked cave mouth.' },
+      { pos: [13, 2], targetMap: 'stone_watch', targetPos: [2, 10], message: 'You march toward the ruined watch road.', requiresQuest: 'spider_brood', requiresStatus: 'done', blockedMessage: 'The ruined watch road is too dangerous until Brann\'s nest hunt is finished.' },
       { pos: [12, 8], targetMap: 'troll_hollow', targetPos: [2, 10], message: 'You push through the briars into troll country.' },
       { pos: [4, 9], targetMap: 'sunken_crypt', targetPos: [2, 10], message: 'You descend through a cracked burial hatch.' },
-      { pos: [14, 9], targetMap: 'webbed_nest', targetPos: [2, 10], message: 'You duck under torn webbing into a spider nest.' }
+      { pos: [14, 9], targetMap: 'webbed_nest', targetPos: [2, 10], message: 'You duck under torn webbing into a spider nest.', requiresQuest: 'crypt_ward', requiresStatus: 'done', blockedMessage: 'The webbed tunnels are sealed until the crypt is cleansed.' }
     ],
     enemies: [{ kind: 'wolf', pos: [5, 5] }, { kind: 'wolf', pos: [9, 7] }, { kind: 'dire_wolf', pos: [12, 4] }, { kind: 'orc', pos: [10, 6] }],
     items: [{ id: 'small_potion', pos: [4, 8] }, { id: 'buckler', pos: [10, 8] }, { id: 'mana_potion', pos: [6, 7] }]
@@ -134,12 +141,19 @@ const MAP_DEFS = {
     layout: ['################', '#..............#', '#..##....##....#', '#...,,,,.......#', '#..,~~~~,,.....#', '#.....##.......#', '#..##......##..#', '#.....,,,,.....#', '#...##....##...#', '#.......>......#', '#.<.....##.....#', '################'],
     npcs: [], exits: [{ pos: [2, 10], targetMap: 'meadow', targetPos: [14, 9], message: 'You break free of the webbed tunnels.' }],
     enemies: [{ kind: 'spider', pos: [6, 3] }, { kind: 'spider', pos: [11, 5] }, { kind: 'broodmother', pos: [9, 9] }], items: [{ id: 'mana_potion', pos: [4, 7] }, { id: 'small_potion', pos: [12, 3] }]
+  },
+  stone_watch: {
+    name: 'Stone Watch', story: 'A broken frontier tower now held by horned raiders.',
+    layout: ['################', '#....,,....##..#', '#..##....,.....#', '#......##...,..#', '#..,....,..##..#', '#..,##........##', '#......,.......#', '#.##.....##....#', '#....,....,....#', '#...##....>....#', '#.<.....##.....#', '################'],
+    npcs: [], exits: [{ pos: [2, 10], targetMap: 'meadow', targetPos: [13, 2], message: 'You withdraw from the ruined watch road.' }],
+    enemies: [{ kind: 'minotaur', pos: [6, 3] }, { kind: 'minotaur', pos: [11, 2] }, { kind: 'minotaur', pos: [10, 7] }, { kind: 'minotaur_guard', pos: [10, 9] }],
+    items: [{ id: 'mana_potion', pos: [4, 8] }, { id: 'small_potion', pos: [12, 6] }]
   }
 };
 
 const TILE_ASSETS = {
   floor: 'assets/tiles/floor.svg', wall: 'assets/tiles/wall.svg', grass: 'assets/tiles/grass.svg', path: 'assets/tiles/path.svg', stairs: 'assets/tiles/stairs.svg', water: 'assets/tiles/water.svg',
-  player: 'assets/actors/player.svg', npc: 'assets/actors/npc.svg', rat: 'assets/actors/rat.svg', bat: 'assets/actors/bat.svg', wolf: 'assets/actors/wolf.svg', orc: 'assets/actors/orc.svg', troll: 'assets/actors/troll.svg', skeleton: 'assets/actors/skeleton.svg', spider: 'assets/actors/spider.svg',
+  player: 'assets/actors/player.svg', npc: 'assets/actors/npc.svg', rat: 'assets/actors/rat.svg', bat: 'assets/actors/bat.svg', wolf: 'assets/actors/wolf.svg', orc: 'assets/actors/orc.svg', troll: 'assets/actors/troll.svg', skeleton: 'assets/actors/skeleton.svg', spider: 'assets/actors/spider.svg', minotaur: 'assets/actors/minotaur.svg',
   club: 'assets/items/club.svg', knife: 'assets/items/knife.svg', sword: 'assets/items/sword.svg', mace: 'assets/items/mace.svg', bow: 'assets/items/bow.svg',
   tattered_tunic: 'assets/items/tunic.svg', worn_boots: 'assets/items/boots.svg', leather_vest: 'assets/items/vest.svg', buckler: 'assets/items/shield.svg', chainmail: 'assets/items/chainmail.svg', hood: 'assets/items/hood.svg',
   small_potion: 'assets/items/potion.svg', mana_potion: 'assets/items/mana_potion.svg', stolen_banner: 'assets/items/banner.svg', amulet: 'assets/items/amulet.svg'
@@ -234,17 +248,17 @@ function startNewGame() {
       pos: [7, 8], hp: 28, maxHp: 28, mana: 10, baseMaxMana: 10, maxMana: 10, level: 1, exp: 0, nextExp: 12, gold: 10,
       weapon: 'club', weapons: ['club'], armorOwned: ['tattered_tunic', 'worn_boots'], charmsOwned: [],
       equipment: { head: null, body: 'tattered_tunic', feet: 'worn_boots', offhand: null, charm: null },
-      potions: 1, manaPotions: 0, spells: ['minor_heal'], inventory: { rat_tail: 0, bat_wing: 0, wolf_pelt: 0, dire_pelt: 0, orc_badge: 0, troll_tusk: 0, troll_iron: 0, bone_token: 0, crypt_relic: 0, spider_silk: 0, brood_gland: 0, stolen_banner: 0 }
+      potions: 1, manaPotions: 0, spells: ['minor_heal'], inventory: { rat_tail: 0, bat_wing: 0, wolf_pelt: 0, dire_pelt: 0, orc_badge: 0, troll_tusk: 0, troll_iron: 0, bone_token: 0, crypt_relic: 0, spider_silk: 0, brood_gland: 0, minotaur_horn: 0, stolen_banner: 0 }
     },
     quests: {
       cellar_sweep: { status: 'available', rat: 0, bat: 0 }, wolf_hunt: { status: 'locked', wolf: 0, dire_wolf: 0 }, orc_threat: { status: 'locked', chieftain_defeated: false, banner_collected: false },
-      troll_hunt: { status: 'locked', troll: 0, troll_champion: 0 }, crypt_ward: { status: 'locked', skeleton: 0, bone_guard: 0, relic_collected: false }, spider_brood: { status: 'locked', spider: 0, broodmother: 0 }
+      troll_hunt: { status: 'locked', troll: 0, troll_champion: 0 }, crypt_ward: { status: 'locked', skeleton: 0, bone_guard: 0, relic_collected: false }, spider_brood: { status: 'locked', spider: 0, broodmother: 0 }, minotaur_watch: { status: 'locked', minotaur: 0, minotaur_guard: 0 }
     },
     worldState: Object.fromEntries(Object.keys(MAP_DEFS).map((mapId) => [mapId, { enemies: MAP_DEFS[mapId].enemies.map((entry) => makeEnemy(entry.kind, entry.pos)), items: MAP_DEFS[mapId].items.map((item) => ({ ...item, pos: [...item.pos] })) }])),
     logLines: [], dialogue: { speaker: 'Guide', text: 'Talk to Elder Mara first. Town, magic, shops, and gear management are all live.' }
   };
-  message('Ashenfall now has equipment management, a real shop list, and a webbed late-game nest.');
-  message('Use Quick Shot after you earn or buy the Hunter Bow.');
+  message('Ashenfall now has equipment management, a real shop list, and a full late-game route to Stone Watch.');
+  message('Use Quick Shot after you earn or buy the Hunter Bow, then push on toward the minotaur road.');
   refresh();
 }
 
@@ -372,6 +386,11 @@ function recordEnemyDefeat(kind, pos) {
     if (kind === 'broodmother') state.quests.spider_brood.broodmother += 1;
     if (state.quests.spider_brood.spider >= 2 && state.quests.spider_brood.broodmother >= 1) { state.quests.spider_brood.status = 'turnin'; message('The Webbed Nest is broken. Return to Brann.'); }
   }
+  if (state.quests.minotaur_watch.status === 'active') {
+    if (kind === 'minotaur') state.quests.minotaur_watch.minotaur += 1;
+    if (kind === 'minotaur_guard') state.quests.minotaur_watch.minotaur_guard += 1;
+    if (state.quests.minotaur_watch.minotaur >= 3 && state.quests.minotaur_watch.minotaur_guard >= 1) { state.quests.minotaur_watch.status = 'turnin'; message('Stone Watch is reclaimed. Report back to Captain Ivo.'); }
+  }
 }
 
 function updateOrcQuestState() { if (state.quests.orc_threat.status === 'active' && state.quests.orc_threat.chieftain_defeated && state.quests.orc_threat.banner_collected) { state.quests.orc_threat.status = 'turnin'; message('Return the banner to Captain Ivo.'); } }
@@ -471,11 +490,17 @@ function interactHunter() {
 
 function interactCaptain() {
   const quest = state.quests.orc_threat;
+  const minotaurQuest = state.quests.minotaur_watch;
   if (quest.status === 'locked') return say('Captain Ivo', 'Earn Brann\'s trust first.');
   if (quest.status === 'available') { quest.status = 'active'; return say('Captain Ivo', 'Enter the orc den, kill the chieftain, and recover our banner.'); }
   if (quest.status === 'active') return say('Captain Ivo', quest.chieftain_defeated ? 'Find the banner before you return.' : 'The chieftain still lives.');
   if (quest.status === 'turnin') { quest.status = 'done'; state.quests.troll_hunt.status = 'available'; state.player.gold += 40; if (!state.player.weapons.includes('iron_sword')) state.player.weapons.push('iron_sword'); state.player.weapon = 'iron_sword'; return say('Captain Ivo', 'Ashenfall is safe for now. Take this Iron Sword and see Bram about the trolls.'); }
-  say('Captain Ivo', 'Keep the roads clean and the den quiet.');
+  if (state.quests.spider_brood.status !== 'done') return say('Captain Ivo', 'Finish Brann\'s nest hunt. Then I will send you to reclaim the frontier watch.');
+  if (minotaurQuest.status === 'locked') { minotaurQuest.status = 'available'; return say('Captain Ivo', 'The Stone Watch road is open again, but minotaurs hold the tower. Ready yourself and speak to me again.'); }
+  if (minotaurQuest.status === 'available') { minotaurQuest.status = 'active'; return say('Captain Ivo', 'March to Stone Watch. Kill 3 minotaurs and their guard captain, then return to me.'); }
+  if (minotaurQuest.status === 'active') return say('Captain Ivo', 'Stone Watch still stands in enemy hands. Finish the job.');
+  if (minotaurQuest.status === 'turnin') { minotaurQuest.status = 'done'; if (!state.player.weapons.includes('soldier_blade')) state.player.weapons.push('soldier_blade'); state.player.weapon = 'soldier_blade'; collectItemById('kite_shield'); state.player.gold += 120; return say('Captain Ivo', 'Stone Watch is ours again. Take this Soldier Blade, Kite Shield, and 120 gold.'); }
+  say('Captain Ivo', 'You have driven the frontier threats back for now.');
 }
 
 function interactTrader() {
@@ -520,7 +545,15 @@ function isNearTrader() { const npc = adjacentNpc(); return npc && npc.id === 't
 function grantMerchantOffer(offer) { if (offer.type === 'weapon' || offer.type === 'armor') collectItemById(offer.id); else if (offer.id === 'small_potion') state.player.potions += 1; else if (offer.id === 'mana_potion') state.player.manaPotions += 1; }
 function merchantItemName(offer) { if (offer.type === 'weapon') return WEAPONS[offer.id].name; if (offer.type === 'armor') return ARMOR[offer.id].name; return ITEMS[offer.id].name; }
 
-function checkExit(pos) { const exit = currentMap().exits.find((entry) => samePos(entry.pos, pos)); if (!exit) return; state.currentMapId = exit.targetMap; state.player.pos = [...exit.targetPos]; message(exit.message); }
+function exitIsUnlocked(exit) { return !exit.requiresQuest || state.quests[exit.requiresQuest]?.status === exit.requiresStatus; }
+function checkExit(pos) {
+  const exit = currentMap().exits.find((entry) => samePos(entry.pos, pos));
+  if (!exit) return;
+  if (!exitIsUnlocked(exit)) return message(exit.blockedMessage || 'That route is not open yet.');
+  state.currentMapId = exit.targetMap;
+  state.player.pos = [...exit.targetPos];
+  message(exit.message);
+}
 function saveGame() { localStorage.setItem(SAVE_KEY, JSON.stringify(state)); say('Guide', 'Game saved on this device.'); refresh(); }
 function loadGame() { const raw = localStorage.getItem(SAVE_KEY); if (!raw) { say('Guide', 'No save file found on this device.'); return refresh(); } try { state = JSON.parse(raw); ensureSaveShape(); say('Guide', 'Save loaded.'); } catch { say('Guide', 'Save file is invalid.'); } refresh(); }
 
@@ -528,10 +561,10 @@ function ensureSaveShape() {
   state.player.mana ??= 10; state.player.baseMaxMana ??= state.player.maxMana ?? 10; state.player.maxMana ??= state.player.baseMaxMana;
   state.player.armorOwned ??= state.player.armor ?? ['tattered_tunic', 'worn_boots']; state.player.charmsOwned ??= []; state.player.equipment ??= { head: null, body: 'tattered_tunic', feet: 'worn_boots', offhand: state.player.armorOwned.includes('buckler') ? 'buckler' : null, charm: null };
   state.player.equipment.head ??= null; state.player.manaPotions ??= 0; state.player.spells ??= ['minor_heal'];
-  ['troll_hunt','crypt_ward','spider_brood'].forEach((questId) => { if (!state.quests[questId]) state.quests[questId] = questId === 'troll_hunt' ? { status: 'locked', troll: 0, troll_champion: 0 } : questId === 'crypt_ward' ? { status: 'locked', skeleton: 0, bone_guard: 0, relic_collected: false } : { status: 'locked', spider: 0, broodmother: 0 }; });
-  ['troll_hollow','sunken_crypt','webbed_nest'].forEach((mapId) => { if (!state.worldState[mapId]) state.worldState[mapId] = { enemies: MAP_DEFS[mapId].enemies.map((entry) => makeEnemy(entry.kind, entry.pos)), items: MAP_DEFS[mapId].items.map((item) => ({ ...item, pos: [...item.pos] })) }; });
+  ['troll_hunt','crypt_ward','spider_brood','minotaur_watch'].forEach((questId) => { if (!state.quests[questId]) state.quests[questId] = questId === 'troll_hunt' ? { status: 'locked', troll: 0, troll_champion: 0 } : questId === 'crypt_ward' ? { status: 'locked', skeleton: 0, bone_guard: 0, relic_collected: false } : questId === 'spider_brood' ? { status: 'locked', spider: 0, broodmother: 0 } : { status: 'locked', minotaur: 0, minotaur_guard: 0 }; });
+  ['troll_hollow','sunken_crypt','webbed_nest','stone_watch'].forEach((mapId) => { if (!state.worldState[mapId]) state.worldState[mapId] = { enemies: MAP_DEFS[mapId].enemies.map((entry) => makeEnemy(entry.kind, entry.pos)), items: MAP_DEFS[mapId].items.map((item) => ({ ...item, pos: [...item.pos] })) }; });
   state.dialogue ??= { speaker: 'Guide', text: 'Save loaded.' };
-  ['bone_token','crypt_relic','spider_silk','brood_gland'].forEach((itemId) => { state.player.inventory[itemId] ??= 0; });
+  ['bone_token','crypt_relic','spider_silk','brood_gland','minotaur_horn'].forEach((itemId) => { state.player.inventory[itemId] ??= 0; });
   recalculateManaPool();
 }
 
@@ -568,7 +601,7 @@ function refresh() {
   refs.inventoryArmor.textContent = `Armor: ${state.player.armorOwned.map((id) => ARMOR[id].name).join(', ')}`;
   refs.inventoryWeapons.textContent = `Weapons: ${state.player.weapons.map((id) => WEAPONS[id].name).join(', ')}`;
   refs.inventoryPotions.textContent = `Potions: ${state.player.potions} | Mana Potions: ${state.player.manaPotions}`;
-  refs.inventoryLoot.textContent = `Loot: Rat ${countItem('rat_tail')}, Bat ${countItem('bat_wing')}, Wolf ${countItem('wolf_pelt')}, Dire ${countItem('dire_pelt')}, Orc ${countItem('orc_badge')}, Troll ${countItem('troll_tusk')}, Bone ${countItem('bone_token')}, Silk ${countItem('spider_silk')}`;
+  refs.inventoryLoot.textContent = `Loot: Rat ${countItem('rat_tail')}, Bat ${countItem('bat_wing')}, Wolf ${countItem('wolf_pelt')}, Dire ${countItem('dire_pelt')}, Orc ${countItem('orc_badge')}, Troll ${countItem('troll_tusk')}, Bone ${countItem('bone_token')}, Silk ${countItem('spider_silk')}, Horn ${countItem('minotaur_horn')}`;
   refs.equipmentSlots.textContent = `Head: ${slotName('head')}\nBody: ${slotName('body')}\nFeet: ${slotName('feet')}\nOffhand: ${slotName('offhand')}\nCharm: ${slotName('charm')}\nWeapon: ${WEAPONS[state.player.weapon].name}`;
   refs.merchantStock.textContent = merchantStockText();
   renderQuestList(); renderEquipmentManager(); renderInventoryManager(); renderShopManager();
@@ -616,7 +649,11 @@ function objectiveText() {
   if (q.spider_brood.status === 'available') return 'Objective: Talk to Brann to start the Webbed Nest hunt.';
   if (q.spider_brood.status === 'active') return `Objective: Webbed Nest — Spiders ${q.spider_brood.spider}/2, Broodmother ${q.spider_brood.broodmother}/1.`;
   if (q.spider_brood.status === 'turnin') return 'Objective: Return to Brann for your ranged reward.';
-  return 'Objective complete: you finished the current expanded vertical slice.';
+  if (q.spider_brood.status === 'done' && q.minotaur_watch.status === 'locked') return 'Objective: Talk to Captain Ivo about the frontier road to Stone Watch.';
+  if (q.minotaur_watch.status === 'available') return 'Objective: Talk to Captain Ivo to reclaim Stone Watch.';
+  if (q.minotaur_watch.status === 'active') return `Objective: Stone Watch — Minotaurs ${q.minotaur_watch.minotaur}/3, Guard Captain ${q.minotaur_watch.minotaur_guard}/1.`;
+  if (q.minotaur_watch.status === 'turnin') return 'Objective: Return to Captain Ivo for the Stone Watch reward.';
+  return 'Objective complete: Ashenfall holds through the Stone Watch frontier.';
 }
 
 function questStatusText(questId) {
@@ -627,10 +664,17 @@ function questStatusText(questId) {
   if (questId === 'troll_hunt' && q.status === 'active') return `Active — Trolls ${q.troll}/2, Champion ${q.troll_champion}/1`;
   if (questId === 'crypt_ward' && q.status === 'active') return `Active — Skeletons ${q.skeleton}/2, Bone Guard ${q.bone_guard}/1, Relic ${q.relic_collected ? 'found' : 'missing'}`;
   if (questId === 'spider_brood' && q.status === 'active') return `Active — Spiders ${q.spider}/2, Broodmother ${q.broodmother}/1`;
+  if (questId === 'minotaur_watch' && q.status === 'active') return `Active — Minotaurs ${q.minotaur}/3, Guard Captain ${q.minotaur_guard}/1`;
   return ({ locked: 'Locked', available: 'Available', active: 'Active', turnin: 'Ready to turn in', done: 'Complete' })[q.status] || 'Unknown';
 }
 
-function nearbyText() { const npc = adjacentNpc(); if (npc) return `Nearby: ${npc.name} is ready to talk.`; const exit = currentMap().exits.find((entry) => samePos(entry.pos, state.player.pos)); if (exit) return `Traveling to ${MAP_DEFS[exit.targetMap].name}.`; return 'Nearby: explore, manage gear, and clear the next quest objective.'; }
+function nearbyText() {
+  const npc = adjacentNpc();
+  if (npc) return `Nearby: ${npc.name} is ready to talk.`;
+  const exit = currentMap().exits.find((entry) => samePos(entry.pos, state.player.pos));
+  if (exit) return exitIsUnlocked(exit) ? `Traveling to ${MAP_DEFS[exit.targetMap].name}.` : (exit.blockedMessage || 'That route is sealed for now.');
+  return 'Nearby: explore, manage gear, and clear the next quest objective.';
+}
 function totalDefense() { return ['head', 'body', 'feet', 'offhand'].reduce((sum, slot) => { const itemId = state.player.equipment[slot]; return itemId ? sum + ARMOR[itemId].defense : sum; }, 0); }
 function merchantStockText() { return MERCHANT_STOCK.map((offer) => `${merchantItemName(offer)} — ${offer.price}g${ownsOffer(offer) ? ' (owned)' : ''}`).join('\n'); }
 function ownsOffer(offer) { if (offer.type === 'weapon') return state.player.weapons.includes(offer.id); if (offer.type === 'armor') return state.player.armorOwned.includes(offer.id); return false; }

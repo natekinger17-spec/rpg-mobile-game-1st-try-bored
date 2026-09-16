@@ -1,8 +1,8 @@
-const CACHE_NAME = 'ashenfall-rpg-v4';
+const CACHE_NAME = 'ashenfall-rpg-v5';
 const FILES = [
   './', './index.html', './manifest.webmanifest', './sw.js', './web/styles.css', './web/game.js', './icon.svg',
   './assets/tiles/floor.svg', './assets/tiles/wall.svg', './assets/tiles/grass.svg', './assets/tiles/path.svg', './assets/tiles/stairs.svg', './assets/tiles/water.svg',
-  './assets/actors/player.svg', './assets/actors/npc.svg', './assets/actors/rat.svg', './assets/actors/bat.svg', './assets/actors/wolf.svg', './assets/actors/orc.svg', './assets/actors/troll.svg', './assets/actors/skeleton.svg', './assets/actors/spider.svg',
+  './assets/actors/player.svg', './assets/actors/npc.svg', './assets/actors/rat.svg', './assets/actors/bat.svg', './assets/actors/wolf.svg', './assets/actors/orc.svg', './assets/actors/troll.svg', './assets/actors/skeleton.svg', './assets/actors/spider.svg', './assets/actors/minotaur.svg',
   './assets/items/club.svg', './assets/items/knife.svg', './assets/items/sword.svg', './assets/items/mace.svg', './assets/items/bow.svg',
   './assets/items/tunic.svg', './assets/items/boots.svg', './assets/items/vest.svg', './assets/items/shield.svg', './assets/items/chainmail.svg', './assets/items/hood.svg',
   './assets/items/potion.svg', './assets/items/mana_potion.svg', './assets/items/banner.svg', './assets/items/amulet.svg'
