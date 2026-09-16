@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#1f160f">
+  <title>Ashenfall RPG</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="stylesheet" href="web/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div>
+        <h1>Ashenfall RPG</h1>
+        <p>iPhone-first offline PvE prototype</p>
+      </div>
+      <button id="installButton" class="secondary hidden" type="button">Install</button>
+    </header>
+
+    <main class="layout">
+      <section class="game-panel">
+        <canvas id="gameCanvas" width="512" height="384" aria-label="Game map"></canvas>
+      </section>
+
+      <section class="hud-panel">
+        <div class="card">
+          <h2 id="zoneName">Loading…</h2>
+          <p id="zoneStory"></p>
+          <p id="objectiveText"></p>
+          <p id="nearbyText"></p>
+        </div>
+
+        <div class="card compact-grid">
+          <div><span class="label">Level</span><strong id="playerLevel"></strong></div>
+          <div><span class="label">HP</span><strong id="playerHp"></strong></div>
+          <div><span class="label">XP</span><strong id="playerXp"></strong></div>
+          <div><span class="label">Gold</span><strong id="playerGold"></strong></div>
+          <div><span class="label">Weapon</span><strong id="playerWeapon"></strong></div>
+          <div><span class="label">Defense</span><strong id="playerDefense"></strong></div>
+        </div>
+
+        <div class="card">
+          <h3>Inventory</h3>
+          <p id="inventoryArmor"></p>
+          <p id="inventoryWeapons"></p>
+          <p id="inventoryPotions"></p>
+          <p id="inventoryLoot"></p>
+        </div>
+
+        <div class="card actions">
+          <button id="interactButton" type="button">Interact</button>
+          <button id="swapWeaponButton" type="button">Swap Weapon</button>
+          <button id="usePotionButton" type="button">Use Potion</button>
+          <button id="saveButton" class="secondary" type="button">Save</button>
+          <button id="loadButton" class="secondary" type="button">Load</button>
+          <button id="newRunButton" class="danger" type="button">New Run</button>
+        </div>
+
+        <div class="card dpad-wrap">
+          <h3>Move</h3>
+          <div class="dpad">
+            <div></div>
+            <button data-move="up" type="button">▲</button>
+            <div></div>
+            <button data-move="left" type="button">◀</button>
+            <button data-move="down" type="button">▼</button>
+            <button data-move="right" type="button">▶</button>
+          </div>
+          <p class="hint">Swipe on the map or use these buttons.</p>
+        </div>
+
+        <div class="card">
+          <h3>Field Notes</h3>
+          <div id="logOutput" class="log"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="web/game.js"></script>
+</body>
+</html>
