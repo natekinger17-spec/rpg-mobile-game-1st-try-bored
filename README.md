@@ -1,52 +1,70 @@
 # rpg-mobile-game-1st-try-bored
 
-A first playable **offline, single-player, Tibia-inspired mobile RPG prototype** built in **Godot 4**.
+An **offline, single-player, Tibia-inspired mobile RPG vertical slice** built in **Godot 4**.
 
 ## Why Godot
 
-Godot is the best fit for this project right now because it gives us:
-- strong 2D support for a top-down game
-- straightforward mobile export for Android/iOS later
+Godot is the best fit here because it gives this project:
+- strong 2D support for a top-down RPG
+- easy mobile export targets later
 - a lightweight offline-first workflow
-- fast iteration without paid licenses or engine lock-in
+- fast iteration without license friction
 
-## Current prototype
+## Current game slice
 
-This first slice focuses on the opening cellar-style zone and the low-level gear/monster fantasy you described:
-- grid-based movement and combat
-- swipe controls for mobile plus keyboard controls for desktop testing
-- solo PvE combat against **rats** and **bats**
-- starter gear progression with a **rough club**, **rusty knife**, **tattered tunic**, and **worn boots**
-- simple loot trophies from kills
-- a small potion pickup
-- a basic quest goal: clear the zone
+The repo now contains a complete start-to-finish prototype loop:
+- **Ashenfall town hub** with quest NPCs, healer, and trader
+- **Old Cellar** starter dungeon with rats, bats, rough gear, and potion pickup
+- **Briar Meadow** wolf zone with a stronger dire wolf encounter
+- **Orc Den** finale with an orc chieftain boss-style fight
+- grid-based movement and collision
+- turn-like bump combat
+- gear upgrades including club, knife, buckler, leather vest, and iron sword
+- gold, consumables, loot trophies, experience, leveling, and defense
+- quest chain with rewards and progression unlocks
+- save/load support using `user://savegame.json`
+- mobile-friendly on-screen controls plus swipe and keyboard input
 
 ## Project structure
 
 - `/project.godot` — Godot project configuration
-- `/scenes/Main.tscn` — main scene
-- `/scripts/main.gd` — prototype gameplay loop
-- `/assets/` — simple original placeholder pixel-style SVG art
+- `/scenes/Main.tscn` — main scene entry point
+- `/scripts/main.gd` — full prototype loop
+- `/assets/actors` — placeholder actor art
+- `/assets/items` — placeholder item art
+- `/assets/tiles` — placeholder tile art
 
 ## How to run
 
 1. Install **Godot 4.x**.
-2. Open the project at `/home/runner/work/rpg-mobile-game-1st-try-bored/rpg-mobile-game-1st-try-bored`.
+2. Open `/home/runner/work/rpg-mobile-game-1st-try-bored/rpg-mobile-game-1st-try-bored`.
 3. Run the default scene.
 
 ## Controls
 
 - **Swipe** on mobile to move one tile
-- **Arrow keys / WASD** on desktop to move
-- Move into an enemy tile to attack
-- **Q** or the **Swap Weapon** button to cycle weapons
-- **E** or the **Use Potion** button to drink a potion
-- **Restart** button to reset the prototype
+- **Arrow keys / WASD** to move on desktop
+- Walk into enemies to attack
+- **F** or **Interact** to talk to nearby NPCs
+- **Q** or **Swap Weapon** to cycle weapons
+- **E** or **Use Potion** to heal
+- **F5** or **Save** to save
+- **F9** or **Load** to load
+- **New Run** to reset the whole game state
 
-## Recommended next steps
+## Prototype quest flow
 
-- add NPCs, shops, and town safe zones
-- split combat/data/UI into separate systems
-- add more monster families like wolves, trolls, and orcs
-- build an overworld with stairs, caves, and quest givers
-- add save/load and then optional co-op foundations later
+1. Talk to **Elder Mara** in town
+2. Clear the **cellar rats and bats**
+3. Return for reward and unlock the **wolf hunt**
+4. Clear **wolves and the dire wolf** in the meadow
+5. Return for reward and unlock the **orc finale**
+6. Defeat the **Orc Chieftain**, recover the banner, and turn it in
+
+## Best next expansions
+
+- split data, combat, map state, and UI into separate scripts/scenes
+- add NPC dialog windows instead of log-only conversations
+- add additional maps, classes, spells, ranged combat, and shops
+- add save slots and persistent world progression
+- begin planning optional co-op after the solo loop is stable
