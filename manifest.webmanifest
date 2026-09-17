@@ -1,0 +1,16 @@
+{
+  "name": "Ashenfall RPG",
+  "short_name": "Ashenfall",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#120d09",
+  "theme_color": "#1f160f",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
