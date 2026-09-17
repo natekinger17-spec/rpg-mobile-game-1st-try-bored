@@ -18,12 +18,12 @@ That gives you:
 The playable browser version now includes:
 - retro-styled mobile UI inspired by older PC RPG layouts
 - **Ashenfall town** with healer, trader, blacksmith, acolyte, hunter, and elder NPCs
-- **Old Cellar**, **Briar Meadow**, **Orc Den**, **Troll Hollow**, **Sunken Crypt**, **Webbed Nest**, **Stone Watch**, and **Ember Chapel**
-- bats, rats, wolves, dire wolves, orcs, trolls, skeletons, spiders, minotaurs, ash cultists, and boss-style variants
+- **Old Cellar**, **Briar Meadow**, **Orc Den**, **Troll Hollow**, **Sunken Crypt**, **Webbed Nest**, **Stone Watch**, **Ember Chapel**, and **Cinder Keep**
+- bats, rats, wolves, dire wolves, orcs, trolls, skeletons, spiders, minotaurs, ash cultists, ember wyrms, and boss-style variants
 - grid-based movement, melee combat, ranged bow combat, loot, gold, XP, leveling, defense, mana, and spells
 - real equipment and inventory management panels with equip/use controls
 - a shop window with buy buttons for merchant stock
-- late-game frontier rewards including the **Soldier Blade**, **Kite Shield**, **Blessed Mail**, and **Sun Lance**
+- late-game frontier rewards including the **Soldier Blade**, **Kite Shield**, **Blessed Mail**, **Sun Lance**, and the **Dawn Sigil**
 - local save/load in the browser
 - offline PWA support through the service worker
 
@@ -70,3 +70,4 @@ The earlier Godot files remain in the repo as reference material, but the **web 
 7. Return to **Brann** to clear the **Webbed Nest** and claim ranged gear
 8. Report to **Captain Ivo** and reclaim **Stone Watch** from the minotaurs
 9. Return to **Acolyte Nera** and purge the **Ember Chapel** for your late-game magic reward
+10. Answer **Elder Mara** and march through the dawn gate to finish **Cinder Keep**

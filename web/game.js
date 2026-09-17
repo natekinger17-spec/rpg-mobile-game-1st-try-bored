@@ -2,7 +2,7 @@ const TILE_SIZE = 32;
 const SAVE_KEY = 'ashenfall-rpg-save-v4';
 const LOG_LIMIT = 14;
 
-const QUEST_ORDER = ['cellar_sweep', 'wolf_hunt', 'orc_threat', 'troll_hunt', 'crypt_ward', 'spider_brood', 'minotaur_watch', 'ember_chapel'];
+const QUEST_ORDER = ['cellar_sweep', 'wolf_hunt', 'orc_threat', 'troll_hunt', 'crypt_ward', 'spider_brood', 'minotaur_watch', 'ember_chapel', 'cinder_crown'];
 const QUEST_LABELS = {
   cellar_sweep: 'Cellar Sweep',
   wolf_hunt: 'Wolf Hunt',
@@ -11,7 +11,8 @@ const QUEST_LABELS = {
   crypt_ward: 'Sunken Crypt',
   spider_brood: 'Webbed Nest',
   minotaur_watch: 'Stone Watch',
-  ember_chapel: 'Ember Chapel'
+  ember_chapel: 'Ember Chapel',
+  cinder_crown: 'Cinder Keep'
 };
 
 const WEAPONS = {
@@ -35,7 +36,8 @@ const ARMOR = {
 };
 
 const CHARMS = {
-  sun_amulet: { name: 'Sun Amulet', icon: 'amulet', manaBonus: 6, spellPower: 2 }
+  sun_amulet: { name: 'Sun Amulet', icon: 'amulet', manaBonus: 6, spellPower: 2 },
+  dawn_sigil: { name: 'Dawn Sigil', icon: 'amulet', manaBonus: 10, spellPower: 4 }
 };
 
 const ITEMS = {
@@ -55,6 +57,7 @@ const ITEMS = {
   minotaur_horn: { name: 'Minotaur Horn' },
   ember_shard: { name: 'Ember Shard' },
   cinder_relic: { name: 'Cinder Relic' },
+  cinder_crown: { name: 'Cinder Crown' },
   stolen_banner: { name: 'Stolen Banner', icon: 'stolen_banner' }
 };
 
@@ -80,7 +83,9 @@ const ENEMIES = {
   minotaur: { name: 'Minotaur', maxHp: 28, attack: 10, icon: 'minotaur', exp: 26, gold: [16, 24], drop: 'minotaur_horn' },
   minotaur_guard: { name: 'Minotaur Guard', maxHp: 46, attack: 13, icon: 'minotaur', exp: 44, gold: [38, 52], drop: 'minotaur_horn' },
   cultist: { name: 'Ash Cultist', maxHp: 30, attack: 11, icon: 'cultist', exp: 30, gold: [20, 28], drop: 'ember_shard' },
-  ash_priest: { name: 'Ash Priest', maxHp: 50, attack: 15, icon: 'cultist', exp: 52, gold: [42, 58], drop: 'cinder_relic' }
+  ash_priest: { name: 'Ash Priest', maxHp: 50, attack: 15, icon: 'cultist', exp: 52, gold: [42, 58], drop: 'cinder_relic' },
+  ember_wyrm: { name: 'Ember Wyrm', maxHp: 38, attack: 13, icon: 'wyrm', exp: 38, gold: [28, 38], drop: 'ember_shard' },
+  cinder_tyrant: { name: 'Cinder Tyrant', maxHp: 64, attack: 18, icon: 'wyrm', exp: 80, gold: [70, 95], drop: 'cinder_crown' }
 };
 
 const MAP_DEFS = {
@@ -88,7 +93,7 @@ const MAP_DEFS = {
     name: 'Ashenfall',
     story: 'Town hub with healing, trade, forging, and spell lore.',
     layout: [
-      '################', '#,,,,,::::,,,,,#', '#,,...:..:...,,#', '#,,....:.....,,#', '#,,....::....,,#', '#:............:#',
+      '################', '#,,,,,::::,,,,,#', '#,,.>.:..:...,,#', '#,,....:.....,,#', '#,,....::....,,#', '#:............:#',
       '#:....,,,,....:#', '#,,....::....,,#', '#,,..........,,#', '#,,...:<....>,,#', '#,,,,,::::,,,,,#', '################'
     ],
     npcs: [
@@ -100,6 +105,7 @@ const MAP_DEFS = {
       { id: 'elder', name: 'Elder Mara', pos: [4, 8] },
       { id: 'trader', name: 'Trader Sela', pos: [11, 8] }
     ], exits: [
+      { pos: [4, 2], targetMap: 'cinder_keep', targetPos: [2, 10], message: 'The dawn gate carries you toward the burning keep.', requiresQuest: 'cinder_crown', requiresStatuses: ['active', 'turnin', 'done'], blockedMessage: 'The dawn gate is dormant until Elder Mara entrusts you with the final march.' },
       { pos: [7, 9], targetMap: 'cellar', targetPos: [2, 10], message: 'You descend into the old cellar.' },
       { pos: [12, 9], targetMap: 'meadow', targetPos: [1, 5], message: 'You follow the road toward the meadow.' }
     ], enemies: [], items: []
@@ -162,15 +168,25 @@ const MAP_DEFS = {
   ember_chapel: {
     name: 'Ember Chapel', story: 'A scorched shrine where ash cultists guard a dying flame.',
     layout: ['################', '#....##....,...#', '#..,,....##....#', '#....,.....,>..#', '#..##..~~..##..#', '#......~~......#', '#..,........,..#', '#..##....##....#', '#....,....,....#', '#...>.....##...#', '#.<....##......#', '################'],
-    npcs: [], exits: [{ pos: [2, 10], targetMap: 'stone_watch', targetPos: [10, 9], message: 'You retreat from the heat back toward Stone Watch.' }],
+    npcs: [], exits: [
+      { pos: [2, 10], targetMap: 'stone_watch', targetPos: [10, 9], message: 'You retreat from the heat back toward Stone Watch.' },
+      { pos: [12, 3], targetMap: 'cinder_keep', targetPos: [2, 10], message: 'You press deeper toward the Cinder Keep.', requiresQuest: 'cinder_crown', requiresStatuses: ['active', 'turnin', 'done'], blockedMessage: 'The road beyond the chapel stays shut until Elder Mara names the final march.' }
+    ],
     enemies: [{ kind: 'cultist', pos: [5, 2] }, { kind: 'cultist', pos: [11, 3] }, { kind: 'cultist', pos: [9, 8] }, { kind: 'ash_priest', pos: [12, 3] }],
     items: [{ id: 'mana_potion', pos: [4, 6] }, { id: 'small_potion', pos: [8, 7] }]
+  },
+  cinder_keep: {
+    name: 'Cinder Keep', story: 'A shattered basalt keep where the tyrant flame still coils.',
+    layout: ['################', '#....,....##...#', '#..##..~~...##.#', '#..,...~~......#', '#....##....##..#', '#......,.......#', '#..##......##..#', '#...,...,....,.#', '#....##....##..#', '#......,...,>..#', '#.<....##......#', '################'],
+    npcs: [], exits: [{ pos: [2, 10], targetMap: 'town', targetPos: [4, 2], message: 'You fall back through the dawn gate to Ashenfall.' }],
+    enemies: [{ kind: 'ember_wyrm', pos: [6, 3] }, { kind: 'ember_wyrm', pos: [11, 5] }, { kind: 'cinder_tyrant', pos: [12, 9] }],
+    items: [{ id: 'mana_potion', pos: [5, 7] }, { id: 'small_potion', pos: [10, 8] }]
   }
 };
 
 const TILE_ASSETS = {
   floor: 'assets/tiles/floor.svg', wall: 'assets/tiles/wall.svg', grass: 'assets/tiles/grass.svg', path: 'assets/tiles/path.svg', stairs: 'assets/tiles/stairs.svg', water: 'assets/tiles/water.svg',
-  player: 'assets/actors/player.svg', npc: 'assets/actors/npc.svg', rat: 'assets/actors/rat.svg', bat: 'assets/actors/bat.svg', wolf: 'assets/actors/wolf.svg', orc: 'assets/actors/orc.svg', troll: 'assets/actors/troll.svg', skeleton: 'assets/actors/skeleton.svg', spider: 'assets/actors/spider.svg', minotaur: 'assets/actors/minotaur.svg', cultist: 'assets/actors/cultist.svg',
+  player: 'assets/actors/player.svg', npc: 'assets/actors/npc.svg', rat: 'assets/actors/rat.svg', bat: 'assets/actors/bat.svg', wolf: 'assets/actors/wolf.svg', orc: 'assets/actors/orc.svg', troll: 'assets/actors/troll.svg', skeleton: 'assets/actors/skeleton.svg', spider: 'assets/actors/spider.svg', minotaur: 'assets/actors/minotaur.svg', cultist: 'assets/actors/cultist.svg', wyrm: 'assets/actors/wyrm.svg',
   club: 'assets/items/club.svg', knife: 'assets/items/knife.svg', sword: 'assets/items/sword.svg', mace: 'assets/items/mace.svg', bow: 'assets/items/bow.svg',
   tattered_tunic: 'assets/items/tunic.svg', worn_boots: 'assets/items/boots.svg', leather_vest: 'assets/items/vest.svg', buckler: 'assets/items/shield.svg', chainmail: 'assets/items/chainmail.svg', hood: 'assets/items/hood.svg',
   small_potion: 'assets/items/potion.svg', mana_potion: 'assets/items/mana_potion.svg', stolen_banner: 'assets/items/banner.svg', amulet: 'assets/items/amulet.svg'
@@ -267,17 +283,17 @@ function startNewGame() {
       pos: [7, 8], hp: 28, maxHp: 28, mana: 10, baseMaxMana: 10, maxMana: 10, level: 1, exp: 0, nextExp: 12, gold: 10,
       weapon: 'club', weapons: ['club'], armorOwned: ['tattered_tunic', 'worn_boots'], charmsOwned: [],
       equipment: { head: null, body: 'tattered_tunic', feet: 'worn_boots', offhand: null, charm: null },
-      potions: 1, manaPotions: 0, spells: ['minor_heal'], inventory: { rat_tail: 0, bat_wing: 0, wolf_pelt: 0, dire_pelt: 0, orc_badge: 0, troll_tusk: 0, troll_iron: 0, bone_token: 0, crypt_relic: 0, spider_silk: 0, brood_gland: 0, minotaur_horn: 0, ember_shard: 0, cinder_relic: 0, stolen_banner: 0 }
+      potions: 1, manaPotions: 0, spells: ['minor_heal'], inventory: { rat_tail: 0, bat_wing: 0, wolf_pelt: 0, dire_pelt: 0, orc_badge: 0, troll_tusk: 0, troll_iron: 0, bone_token: 0, crypt_relic: 0, spider_silk: 0, brood_gland: 0, minotaur_horn: 0, ember_shard: 0, cinder_relic: 0, cinder_crown: 0, stolen_banner: 0 }
     },
     quests: {
       cellar_sweep: { status: 'available', rat: 0, bat: 0 }, wolf_hunt: { status: 'locked', wolf: 0, dire_wolf: 0 }, orc_threat: { status: 'locked', chieftain_defeated: false, banner_collected: false },
-      troll_hunt: { status: 'locked', troll: 0, troll_champion: 0 }, crypt_ward: { status: 'locked', skeleton: 0, bone_guard: 0, relic_collected: false }, spider_brood: { status: 'locked', spider: 0, broodmother: 0 }, minotaur_watch: { status: 'locked', minotaur: 0, minotaur_guard: 0 }, ember_chapel: { status: 'locked', cultist: 0, ash_priest: 0 }
+      troll_hunt: { status: 'locked', troll: 0, troll_champion: 0 }, crypt_ward: { status: 'locked', skeleton: 0, bone_guard: 0, relic_collected: false }, spider_brood: { status: 'locked', spider: 0, broodmother: 0 }, minotaur_watch: { status: 'locked', minotaur: 0, minotaur_guard: 0 }, ember_chapel: { status: 'locked', cultist: 0, ash_priest: 0 }, cinder_crown: { status: 'locked', ember_wyrm: 0, cinder_tyrant: 0 }
     },
     worldState: Object.fromEntries(Object.keys(MAP_DEFS).map((mapId) => [mapId, { enemies: MAP_DEFS[mapId].enemies.map((entry) => makeEnemy(entry.kind, entry.pos)), items: MAP_DEFS[mapId].items.map((item) => ({ ...item, pos: [...item.pos] })) }])),
     logLines: [], dialogue: { speaker: 'Guide', text: 'Talk to Elder Mara first. Town, magic, shops, and gear management are all live.' }
   };
-  message('Ashenfall now runs from the cellar all the way through Stone Watch and the Ember Chapel.');
-  message('Push from Quick Shot into Sun Lance as you finish the late-game route.');
+  message('Ashenfall now stretches from the cellar to the final march on Cinder Keep.');
+  message('Push from Quick Shot into Sun Lance, then finish the tyrant beyond the dawn gate.');
   refresh();
 }
 
@@ -415,6 +431,11 @@ function recordEnemyDefeat(kind, pos) {
     if (kind === 'ash_priest') state.quests.ember_chapel.ash_priest += 1;
     if (state.quests.ember_chapel.cultist >= 3 && state.quests.ember_chapel.ash_priest >= 1) { state.quests.ember_chapel.status = 'turnin'; message('The Ember Chapel is purged. Return to Acolyte Nera.'); }
   }
+  if (state.quests.cinder_crown.status === 'active') {
+    if (kind === 'ember_wyrm') state.quests.cinder_crown.ember_wyrm += 1;
+    if (kind === 'cinder_tyrant') state.quests.cinder_crown.cinder_tyrant += 1;
+    if (state.quests.cinder_crown.ember_wyrm >= 2 && state.quests.cinder_crown.cinder_tyrant >= 1) { state.quests.cinder_crown.status = 'turnin'; message('Cinder Keep is broken. Return to Elder Mara.'); }
+  }
 }
 
 function updateOrcQuestState() { if (state.quests.orc_threat.status === 'active' && state.quests.orc_threat.chieftain_defeated && state.quests.orc_threat.banner_collected) { state.quests.orc_threat.status = 'turnin'; message('Return the banner to Captain Ivo.'); } }
@@ -510,6 +531,12 @@ function interactElder() {
   if (quest.status === 'available') { quest.status = 'active'; return say('Elder Mara', 'Clear the cellar. Bring me proof the rats and bats are gone.'); }
   if (quest.status === 'active') return say('Elder Mara', 'The cellar still needs 3 rats and 2 bats cleared.');
   if (quest.status === 'turnin') { quest.status = 'done'; state.quests.wolf_hunt.status = 'available'; state.player.gold += 12; state.player.potions += 1; if (!state.player.spells.includes('minor_heal')) state.player.spells.push('minor_heal'); return say('Elder Mara', 'Good work. Take 12 gold and a potion, then speak to Nera and Brann.'); }
+  const finalQuest = state.quests.cinder_crown;
+  if (state.quests.ember_chapel.status !== 'done') return say('Elder Mara', 'Ashenfall is steadier now. Keep pushing outward.');
+  if (finalQuest.status === 'locked') { finalQuest.status = 'available'; return say('Elder Mara', 'The dawn gate is awake. Speak once more and I will send you to break the Cinder Keep.'); }
+  if (finalQuest.status === 'available') { finalQuest.status = 'active'; return say('Elder Mara', 'Go through the dawn gate. Kill 2 ember wyrms and the Cinder Tyrant, then bring peace back to Ashenfall.'); }
+  if (finalQuest.status === 'active') return say('Elder Mara', 'The keep still burns. End the tyrant and return alive.');
+  if (finalQuest.status === 'turnin') { finalQuest.status = 'done'; if (!state.player.charmsOwned.includes('dawn_sigil')) state.player.charmsOwned.push('dawn_sigil'); equipCharm('dawn_sigil'); state.player.gold += 220; return say('Elder Mara', 'Ashenfall is saved. Take the Dawn Sigil and 220 gold. You have cleared the current full campaign.'); }
   say('Elder Mara', 'Ashenfall is steadier now. Keep pushing outward.');
 }
 
@@ -570,7 +597,7 @@ function interactAcolyte() {
   if (chapelQuest.status === 'locked') { chapelQuest.status = 'available'; return say('Acolyte Nera', 'The Ember Chapel has stirred beyond Stone Watch. Speak to me once more if you are ready to purge it.'); }
   if (chapelQuest.status === 'available') { chapelQuest.status = 'active'; return say('Acolyte Nera', 'Purge 3 ash cultists and their priest in the Ember Chapel, then return to me for the Sun Lance rite.'); }
   if (chapelQuest.status === 'active') return say('Acolyte Nera', 'The shrine flame still burns black. Finish the purge.');
-  if (chapelQuest.status === 'turnin') { chapelQuest.status = 'done'; if (!state.player.spells.includes('sun_lance')) state.player.spells.push('sun_lance'); collectItemById('blessed_mail'); state.player.gold += 150; return say('Acolyte Nera', 'You have earned Blessed Mail, 150 gold, and the rite of Sun Lance.'); }
+  if (chapelQuest.status === 'turnin') { chapelQuest.status = 'done'; if (!state.player.spells.includes('sun_lance')) state.player.spells.push('sun_lance'); collectItemById('blessed_mail'); state.player.gold += 150; state.quests.cinder_crown.status = 'available'; return say('Acolyte Nera', 'You have earned Blessed Mail, 150 gold, and the rite of Sun Lance. Elder Mara must now judge the final march.'); }
   say('Acolyte Nera', 'Your magic is steady now.');
 }
 
@@ -590,7 +617,12 @@ function isNearTrader() { const npc = adjacentNpc(); return npc && npc.id === 't
 function grantMerchantOffer(offer) { if (offer.type === 'weapon' || offer.type === 'armor') collectItemById(offer.id); else if (offer.id === 'small_potion') state.player.potions += 1; else if (offer.id === 'mana_potion') state.player.manaPotions += 1; }
 function merchantItemName(offer) { if (offer.type === 'weapon') return WEAPONS[offer.id].name; if (offer.type === 'armor') return ARMOR[offer.id].name; return ITEMS[offer.id].name; }
 
-function exitIsUnlocked(exit) { return !exit.requiresQuest || state.quests[exit.requiresQuest]?.status === exit.requiresStatus; }
+function exitIsUnlocked(exit) {
+  if (!exit.requiresQuest) return true;
+  const status = state.quests[exit.requiresQuest]?.status;
+  if (exit.requiresStatuses) return exit.requiresStatuses.includes(status);
+  return status === exit.requiresStatus;
+}
 function checkExit(pos) {
   const exit = currentMap().exits.find((entry) => samePos(entry.pos, pos));
   if (!exit) return;
@@ -606,10 +638,10 @@ function ensureSaveShape() {
   state.player.mana ??= 10; state.player.baseMaxMana ??= state.player.maxMana ?? 10; state.player.maxMana ??= state.player.baseMaxMana;
   state.player.armorOwned ??= state.player.armor ?? ['tattered_tunic', 'worn_boots']; state.player.charmsOwned ??= []; state.player.equipment ??= { head: null, body: 'tattered_tunic', feet: 'worn_boots', offhand: state.player.armorOwned.includes('buckler') ? 'buckler' : null, charm: null };
   state.player.equipment.head ??= null; state.player.manaPotions ??= 0; state.player.spells ??= ['minor_heal'];
-  ['troll_hunt','crypt_ward','spider_brood','minotaur_watch','ember_chapel'].forEach((questId) => { if (!state.quests[questId]) state.quests[questId] = questId === 'troll_hunt' ? { status: 'locked', troll: 0, troll_champion: 0 } : questId === 'crypt_ward' ? { status: 'locked', skeleton: 0, bone_guard: 0, relic_collected: false } : questId === 'spider_brood' ? { status: 'locked', spider: 0, broodmother: 0 } : questId === 'minotaur_watch' ? { status: 'locked', minotaur: 0, minotaur_guard: 0 } : { status: 'locked', cultist: 0, ash_priest: 0 }; });
-  ['troll_hollow','sunken_crypt','webbed_nest','stone_watch','ember_chapel'].forEach((mapId) => { if (!state.worldState[mapId]) state.worldState[mapId] = { enemies: MAP_DEFS[mapId].enemies.map((entry) => makeEnemy(entry.kind, entry.pos)), items: MAP_DEFS[mapId].items.map((item) => ({ ...item, pos: [...item.pos] })) }; });
+  ['troll_hunt','crypt_ward','spider_brood','minotaur_watch','ember_chapel','cinder_crown'].forEach((questId) => { if (!state.quests[questId]) state.quests[questId] = questId === 'troll_hunt' ? { status: 'locked', troll: 0, troll_champion: 0 } : questId === 'crypt_ward' ? { status: 'locked', skeleton: 0, bone_guard: 0, relic_collected: false } : questId === 'spider_brood' ? { status: 'locked', spider: 0, broodmother: 0 } : questId === 'minotaur_watch' ? { status: 'locked', minotaur: 0, minotaur_guard: 0 } : questId === 'ember_chapel' ? { status: 'locked', cultist: 0, ash_priest: 0 } : { status: 'locked', ember_wyrm: 0, cinder_tyrant: 0 }; });
+  ['troll_hollow','sunken_crypt','webbed_nest','stone_watch','ember_chapel','cinder_keep'].forEach((mapId) => { if (!state.worldState[mapId]) state.worldState[mapId] = { enemies: MAP_DEFS[mapId].enemies.map((entry) => makeEnemy(entry.kind, entry.pos)), items: MAP_DEFS[mapId].items.map((item) => ({ ...item, pos: [...item.pos] })) }; });
   state.dialogue ??= { speaker: 'Guide', text: 'Save loaded.' };
-  ['bone_token','crypt_relic','spider_silk','brood_gland','minotaur_horn','ember_shard','cinder_relic'].forEach((itemId) => { state.player.inventory[itemId] ??= 0; });
+  ['bone_token','crypt_relic','spider_silk','brood_gland','minotaur_horn','ember_shard','cinder_relic','cinder_crown'].forEach((itemId) => { state.player.inventory[itemId] ??= 0; });
   recalculateManaPool();
 }
 
@@ -646,7 +678,7 @@ function refresh() {
   refs.inventoryArmor.textContent = `Armor: ${state.player.armorOwned.map((id) => ARMOR[id].name).join(', ')}`;
   refs.inventoryWeapons.textContent = `Weapons: ${state.player.weapons.map((id) => WEAPONS[id].name).join(', ')}`;
   refs.inventoryPotions.textContent = `Potions: ${state.player.potions} | Mana Potions: ${state.player.manaPotions}`;
-  refs.inventoryLoot.textContent = `Loot: Rat ${countItem('rat_tail')}, Bat ${countItem('bat_wing')}, Wolf ${countItem('wolf_pelt')}, Dire ${countItem('dire_pelt')}, Orc ${countItem('orc_badge')}, Troll ${countItem('troll_tusk')}, Bone ${countItem('bone_token')}, Silk ${countItem('spider_silk')}, Horn ${countItem('minotaur_horn')}, Ember ${countItem('ember_shard')}`;
+  refs.inventoryLoot.textContent = `Loot: Rat ${countItem('rat_tail')}, Bat ${countItem('bat_wing')}, Wolf ${countItem('wolf_pelt')}, Dire ${countItem('dire_pelt')}, Orc ${countItem('orc_badge')}, Troll ${countItem('troll_tusk')}, Bone ${countItem('bone_token')}, Silk ${countItem('spider_silk')}, Horn ${countItem('minotaur_horn')}, Ember ${countItem('ember_shard')}, Crown ${countItem('cinder_crown')}`;
   refs.equipmentSlots.textContent = `Head: ${slotName('head')}\nBody: ${slotName('body')}\nFeet: ${slotName('feet')}\nOffhand: ${slotName('offhand')}\nCharm: ${slotName('charm')}\nWeapon: ${WEAPONS[state.player.weapon].name}`;
   refs.merchantStock.textContent = merchantStockText();
   renderQuestList(); renderEquipmentManager(); renderInventoryManager(); renderShopManager();
@@ -702,7 +734,11 @@ function objectiveText() {
   if (q.ember_chapel.status === 'available') return 'Objective: Talk to Acolyte Nera to begin the Ember Chapel purge.';
   if (q.ember_chapel.status === 'active') return `Objective: Ember Chapel — Cultists ${q.ember_chapel.cultist}/3, Ash Priest ${q.ember_chapel.ash_priest}/1.`;
   if (q.ember_chapel.status === 'turnin') return 'Objective: Return to Acolyte Nera for the Sun Lance reward.';
-  return 'Objective complete: Ashenfall holds through the Ember Chapel.';
+  if (q.ember_chapel.status === 'done' && q.cinder_crown.status === 'locked') return 'Objective: Talk to Elder Mara about the awakened dawn gate.';
+  if (q.cinder_crown.status === 'available') return 'Objective: Speak to Elder Mara again to begin the march on Cinder Keep.';
+  if (q.cinder_crown.status === 'active') return `Objective: Cinder Keep — Ember Wyrms ${q.cinder_crown.ember_wyrm}/2, Cinder Tyrant ${q.cinder_crown.cinder_tyrant}/1.`;
+  if (q.cinder_crown.status === 'turnin') return 'Objective: Return to Elder Mara for the final reward.';
+  return 'Objective complete: Ashenfall stands saved. You finished the current full campaign.';
 }
 
 function questStatusText(questId) {
@@ -715,6 +751,7 @@ function questStatusText(questId) {
   if (questId === 'spider_brood' && q.status === 'active') return `Active — Spiders ${q.spider}/2, Broodmother ${q.broodmother}/1`;
   if (questId === 'minotaur_watch' && q.status === 'active') return `Active — Minotaurs ${q.minotaur}/3, Guard Captain ${q.minotaur_guard}/1`;
   if (questId === 'ember_chapel' && q.status === 'active') return `Active — Cultists ${q.cultist}/3, Ash Priest ${q.ash_priest}/1`;
+  if (questId === 'cinder_crown' && q.status === 'active') return `Active — Ember Wyrms ${q.ember_wyrm}/2, Cinder Tyrant ${q.cinder_tyrant}/1`;
   return ({ locked: 'Locked', available: 'Available', active: 'Active', turnin: 'Ready to turn in', done: 'Complete' })[q.status] || 'Unknown';
 }
 
